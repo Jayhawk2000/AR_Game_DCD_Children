@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balance Practice</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh; /* Full height of the viewport */
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('img/bal.png'); 
+            background-size: cover;
+            background-position: center;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            width: 78vw;
+            height: 70vh;
+            border-radius: 10px;
+            background-color: rgba(200, 200, 200, 0.3);
+            display: flex;
+            overflow: hidden;
+        }
+
+        .return-button {
+            position: absolute;
+            top: 2vh;
+            left: 11vw;
+            width: 2.5vw;
+            height: 2.5vw;
+            background: url('img/returnicon.png') no-repeat center center;
+            background-size: contain;
+            border: none;
+            cursor: pointer;
+        }
+
+    
+
+        .left-section {
+            width: 38%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1vw;
+        }
+
+        .illustration img {
+            width:25vw;
+            height: auto;
+            border-radius: 10px;
+            padding: 2vw;
+        }
+
+        .thumbnails {
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .thumbnail {
+            width: 5vw;
+            height: 12vh;
+            margin: 0 0.5vw;
+        }
+
+        .thumbnail:hover {
+            box-shadow: 0 0.21vw 0.42vw rgba(0,0,0,0.3);
+        }
+
+        .arrow {
+            width: 3vw;
+            height: 12vh;
+            margin: 0 0.5vw;
+        }
+
+        .arrow:hover {
+            box-shadow: 0 0.21vw 0.42vw rgba(0,0,0,0.3);
+        }
+
+        .right-section {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .button {
+            background-color: #f8d568;
+            border: none;
+            color: white;
+            padding: 1vw;
+            margin: 0.5vw;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            width: 13vw;
+            font-size: 1.2vw;
+        }
+        .button:hover {
+            box-shadow: 0 0.21vw 0.42vw rgba(0,0,0,0.3);
+        }
+
+
+        h1 {
+            
+            padding-top: 2vh;
+            font-size: 2vw;
+        }
+
+        h2 {
+            font-size: 1.5vw;
+            color: #666;
+        }
+
+        h3 {
+            font-size: 1.5vw;
+            margin: 1vw 0;
+        }
+
+        /* Style the image modal (lightbox effect) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.525); /* Black w/ opacity */
+        }
+
+        /* Modal Content (image) */
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 50%;
+            max-width: 30vw;
+            padding-top: 2vw;
+        }
+
+        /* Caption of Modal Content */
+        #caption {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+            text-align: center;
+            color: #b5b3b3;
+            padding: 10px 0;
+            height: 150px;
+        }
+
+        /* The Close Button */
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+
+
+    </style>
+</head>
+<body>
+<a href="homepage.html" class="return-button"></a>
+<div class="container">
+    <div class="left-section">
+        <div class="illustration">
+            <img src="img/prac_bal.png" alt="Main Illustration">
+        </div>
+        <div class="thumbnails">
+            <img class="arrow" src="img/left.png">
+            <img src="img/b1.png" alt="Preview 1" class="thumbnail" onclick="openModal(this.src)">
+            <img src="img/b2.png" alt="Preview 2" class="thumbnail" onclick="openModal(this.src)">
+            <img src="img/b3.png" alt="Preview 3" class="thumbnail" onclick="openModal(this.src)">
+            <img class="arrow" src="img/right.png">
+        </div>
+    </div>
+    <div class="right-section">
+        <h1 >Static Balance</h1>
+        <h2>Genre: Practice</h2>
+        <div class="training-steps">
+            <h3>1. Step by step training</h3>
+            <button class="button" onclick="window.location.href='AR/balance/RaiseBothHands.html';">Raise Both Hands</button>
+            <button class="button" onclick="window.location.href='AR/balance/LiftOneFoot.html';">Lift One Foot</button>
+            <button class="button" onclick="window.location.href='AR/balance/KeepBalance.html';">Keep Balance</button>
+        </div>
+        <div class="complete-motion">
+            <h3>2. Complete Motion</h3>
+            <button class="button" onclick="window.location.href='AR/balance/FullAction.html';">Full Action</button>
+        </div>
+    </div>
+    <!-- Modal for displaying enlarged images -->
+    <div id="myModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="img01">
+        <div id="caption"></div>
+    </div>
+
+    <script>
+        function openModal(src) {
+            var modal = document.getElementById("myModal");
+            var modalImg = document.getElementById("img01");
+            var captionText = document.getElementById("caption");
+            modal.style.display = "block";
+            modalImg.src = src;
+            captionText.innerHTML = document.querySelector("[src='" + src + "']").alt;
+
+            var span = document.getElementsByClassName("close")[0];
+            span.onclick = function() {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+
+</body>
+</html>
+

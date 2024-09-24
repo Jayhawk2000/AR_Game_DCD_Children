@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebXR AR Demo</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+        #ar-button {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <button id="ar-button" style="display: none;">Enter AR</button>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        let xrSession, xrRefSpace, xrHitTestSource;
+        let scene, camera, renderer, reticle, model;
+
+        function initXR() {
+            if ('xr' in navigator) {
+                navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
+                    if (supported) {
+                        const button = document.getElementById('ar-button');
+                        button.style.display = 'block';
+                        button.addEventListener('click', onRequestSession);
+                    } else {
+                        console.log('Immersive AR not supported on this device');
+                    }
+                });
+            }
+        }
+
+        function onRequestSession() {
+            navigator.xr.requestSession('immersive-ar', {
+                requiredFeatures: ['hit-test', 'dom-overlay'],
+                domOverlay: { root: document.body }
+            }).then(onSessionStarted);
+        }
+
+        function onSessionStarted(session) {
+            xrSession = session;
+            session.addEventListener('end', onSessionEnded);
+
+            setupThreeJs();
+
+            session.updateRenderState({
+                baseLayer: new XRWebGLLayer(session, renderer)
+            });
+
+            session.requestReferenceSpace('local').then((refSpace) => {
+                xrRefSpace = refSpace;
+                session.requestHitTestSource({ space: refSpace }).then((hitTestSource) => {
+                    xrHitTestSource = hitTestSource;
+                });
+            });
+
+            session.requestAnimationFrame(onXRFrame);
+        }
+
+        function setupThreeJs() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.xr.enabled = true;
+            document.body.appendChild(renderer.domElement);
+
+            // 创建一个简单的立方体作为3D模型
+            const geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+            const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+            model = new THREE.Mesh(geometry, material);
+            scene.add(model);
+            model.visible = false;
+
+            // 创建一个瞄准器来显示放置位置
+            const reticleGeometry = new THREE.RingGeometry(0.15, 0.2, 32);
+            const reticleMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            reticle = new THREE.Mesh(reticleGeometry, reticleMaterial);
+            reticle.rotation.x = -Math.PI / 2;
+            reticle.visible = false;
+            scene.add(reticle);
+
+            // 添加点击事件监听器
+            renderer.domElement.addEventListener('click', onSelect);
+
+            // 添加光源
+            const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+            scene.add(light);
+        }
+
+        function onXRFrame(time, frame) {
+            xrSession.requestAnimationFrame(onXRFrame);
+
+            const pose = frame.getViewerPose(xrRefSpace);
+            if (pose) {
+                const view = pose.views[0];
+
+                const viewport = xrSession.renderState.baseLayer.getViewport(view);
+                renderer.setSize(viewport.width, viewport.height);
+
+                camera.matrix.fromArray(view.transform.matrix);
+                camera.projectionMatrix.fromArray(view.projectionMatrix);
+                camera.updateMatrixWorld(true);
+
+                // 执行hit test
+                const hitTestResults = frame.getHitTestResults(xrHitTestSource);
+                if (hitTestResults.length > 0) {
+                    const hitPose = hitTestResults[0].getPose(xrRefSpace);
+                    reticle.visible = true;
+                    reticle.position.set(hitPose.transform.position.x, hitPose.transform.position.y, hitPose.transform.position.z);
+                    reticle.updateMatrixWorld(true);
+                } else {
+                    reticle.visible = false;
+                }
+
+                renderer.render(scene, camera);
+            }
+        }
+
+        function onSelect() {
+            if (reticle.visible) {
+                // 在瞄准器位置放置3D模型
+                model.position.setFromMatrixPosition(reticle.matrix);
+                model.visible = true;
+            }
+        }
+
+        function onSessionEnded() {
+            xrSession = null;
+        }
+
+        window.addEventListener('load', initXR);
+    </script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jump_step1 Practice</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh; /* Full height of the viewport */
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('img/jump.png'); 
+            background-size: cover;
+            background-position: center;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .return-button {
+            position: absolute;
+            top: 2vh;
+            left: 11vw;
+            width: 2.5vw;
+            height: 2.5vw;
+            background: url('img/returnicon.png') no-repeat center center;
+            background-size: contain;
+            border: none;
+            cursor: pointer;
+        }
+
+        
+
+        .container {
+            width: 78vw;
+            height: 70vh;
+            border-radius: 10px;
+            background-color: rgba(200, 200, 200, 0.3);
+            overflow: hidden;
+            text-align: center;
+        }
+
+        h1 {
+        padding-top: 3vw;
+        font-size: 3vw;
+        color: #fbd35c;
+        }
+
+        p {
+        color: #666;
+        font-size: 2vw;
+        line-height: 3vw;
+         }
+
+        .button {
+            background-color: #f8d568;
+            border: none;
+            color: white;
+            padding: 1vw;
+            margin: 0.5vw;
+            cursor: pointer;
+            border-radius: 10px;
+            font-weight: bold;
+            width: 13vw;
+            font-size: 1.8vw;
+        }
+        .button:hover {
+            box-shadow: 0 0.21vw 0.42vw rgba(0,0,0,0.3);
+        }
+
+</style>
+</head>
+<body>
+    <a href="prac_jump.html" class="return-button"></a>
+    <div class="container">
+        <br><br>
+        <h1>Preperation</h1>
+        <br>
+        <p>1. Ankles, knees and hips bend<br>
+            2. Eyes focused forward<br>
+            3. Arms swing behind body </p>
+        <br><br>
+        <button class="button" onclick="window.location.href='http://example.com';">Start</button>
+    </div>
+</body>

@@ -1,0 +1,101 @@
+/* style.css */
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-color: #000;
+}
+
+#cameraContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: scaleX(-1);
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.button-container {
+  position: absolute;
+  top: 10px; /* 将按钮容器定位到页面顶部 */
+  left: 10px; /* 靠近页面左边 */
+  display: flex;
+  flex-direction: column; /* 设置为竖直排列 */
+  gap: 10px; /* 按钮之间的间距 */
+  z-index: 1; /* 确保按钮位于视频之上 */
+}
+
+.button {
+  width: 60px;
+  height: 60px;
+  background-color: #FFB000;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.button svg {
+  fill: white;
+  width: 40px;
+  height: 40px;
+}
+
+.button:hover {
+   background-color: #e09e00;
+}
+
+.center-title {
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2.5rem;
+    color: white;
+    text-align: center;
+    font-family: Roboto, sans-serif;
+    z-index: 2; /* 确保标题在视频和画布的前面 */
+}
+
+/* 语音显示文本样式 */
+.speech-text {
+    display: none; /* 初始时隐藏文本框 */
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.5rem;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px 20px;
+    border-radius: 10px;
+    text-align: center;
+    font-family: Roboto, sans-serif;
+    max-width: 80%;
+    z-index: 2;
+}

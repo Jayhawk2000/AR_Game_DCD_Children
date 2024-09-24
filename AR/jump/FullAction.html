@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Full Action</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- 添加居中的标题 -->
+    <h1 class="center-title">Full Action</h1>
+
+    <!-- 显示摄像头画面 -->
+    <video id="video4" autoplay playsinline></video>
+
+    <!-- 用于渲染3D模型的画布 -->
+    <canvas id="three-canvas"></canvas>
+
+    <!-- 添加一个用于显示语音文字的容器 -->
+    <div id="speech-text" class="speech-text"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+
+    <div id="cameraContainer">
+      <div class="button-container">
+        <!-- 返回按钮 -->
+        <button class="button" id="backButton">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M10 19l-7-7 7-7v4h8v6h-8v4z" />
+          </svg>
+        </button>
+
+        <!-- 上一步按钮 -->
+        <button class="button" id="previousButton">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M15 19l-7-7 7-7v14z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- 导入摄像头管理脚本 -->
+    <script type="module">
+      import { startCamera } from "./camera.js";
+
+      // 使用camera.js中的函数启动摄像头
+      startCamera("video4");
+
+      // 2. 初始化Three.js
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("three-canvas"), alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      camera.position.z = 5;
+
+      // 3. 添加光源
+      const light = new THREE.DirectionalLight(0xffffff, 2);
+      light.position.set(0, 1, 1).normalize();
+      scene.add(light);
+
+      // 4. 加载从Mixamo导出的FBX模型
+      const loader = new THREE.FBXLoader();
+      loader.load(
+        "ForwardJump.fbx",
+        function (object) {
+          // 根据窗口高度调整模型的缩放比例
+          object.scale.set(0.04, 0.04, 0.04); // 缩小模型
+          object.position.set(-6, -4, -5); // 确保模型位于摄像机前方
+          scene.add(object);
+
+          // 如果模型包含动画
+          const mixer = new THREE.AnimationMixer(object);
+          if (object.animations.length > 0) {
+            mixer.clipAction(object.animations[0]).play();
+          }
+
+          // 5. 渲染循环
+          function animate() {
+            requestAnimationFrame(animate);
+            mixer.update(0.01); // 更新动画
+            renderer.render(scene, camera);
+          }
+          animate();
+        },
+        undefined,
+        function (error) {
+          console.error("模型加载失败：", error);
+        }
+      );
+
+      // 6. 调整窗口大小
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+       // 初始化语音合成（Web Speech API）
+      function speak(text, callback) {
+        // 获取语音文本框元素
+        const speechTextElement = document.getElementById("speech-text");
+
+        // 设置显示语音对应的文本
+        speechTextElement.textContent = text;
+        speechTextElement.style.display = "block"; // 显示文本框
+
+        // 创建语音合成对象
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "en-GB"; // 设置语音的语言
+        utterance.pitch = 1.2; // 音高
+        utterance.rate = 1; // 语速
+        utterance.volume = 1; // 音量
+
+        // 获取可用语音列表并选择特定语音
+        const voices = window.speechSynthesis.getVoices();
+
+        // 指定语音的名称（如 "Google US English" 或 "Microsoft Zira - English (United States)"）
+        const specificVoice = voices.find((voice) => voice.name === "Google UK English Female");
+
+        // 如果找到特定语音，则使用它
+        if (specificVoice) {
+          utterance.voice = specificVoice;
+        } else {
+          console.warn("指定的语音未找到，使用默认语音。");
+        }
+
+        // 语音播放结束时执行回调，并清空文本框
+        utterance.onend = function () {
+          speechTextElement.textContent = "";
+          speechTextElement.style.display = "none"; // 隐藏文本框
+          if (callback) {
+            callback(); // 执行回调函数，播放下一条语音
+          }
+        };
+
+        // 播放语音
+        window.speechSynthesis.speak(utterance);
+      }
+
+      // 页面加载时播放的欢迎语
+      let welcomeSpeech = [
+        "Hello, boys and girls, welcome to the full action of jump!",
+        "Stand far away so you can see your whole body on the screen!",
+        "Let's follow the character step by step! Ready?",
+        "Step 1: Swing and spring your arms, getting ready to jump far!",
+        "Step 2: Coil the spring, getting ready to jump big!",
+        "Step 3: Head up, eyes forward! We’re going to jump far!",
+        "Step 4: Jump up, stretch your arms, and try to reach for the sky!",
+        "Step 5: Land softly, like a fairy coming down gently!",
+        "Step 6: After landing, be as quiet as a little mouse!",
+      ];
+
+      let index = 0;
+
+      // 定义播放语音队列的函数
+      function playSpeechQueue() {
+        if (index < welcomeSpeech.length) {
+          speak(welcomeSpeech[index], () => {
+            index++;
+            setTimeout(playSpeechQueue, 3000); // 延时3秒播放下一条
+          });
+        } else {
+          // 如果播放完所有语音条目，等待5秒并重新开始
+          index = 0; // 重置索引
+          setTimeout(playSpeechQueue, 5000); // 延时5秒重新播放整个语音
+        }
+      }
+
+      window.onload = function () {
+        // 等待语音加载完成
+        window.speechSynthesis.onvoiceschanged = function () {
+          // 延时3秒播放第一句
+          setTimeout(playSpeechQueue, 3000);
+        };
+
+        // 监听页面关闭或切换事件，停止语音播放
+        window.onbeforeunload = function () {
+          window.speechSynthesis.cancel(); // 停止当前的语音合成
+        };
+      };
+
+      // 点击返回按钮后跳转到 index.html
+      const backButton = document.getElementById("backButton");
+      backButton.addEventListener("click", () => {
+        window.location.href = "index.html"; // 跳转到index.html页面
+      });
+
+      // 点击上一步按钮后跳转到 Landing.html
+      const previousButton = document.getElementById("previousButton");
+      previousButton.addEventListener("click", () => {
+        window.location.href = "Landing.html"; // 跳转到Landing.html页面
+      });
+    </script>
+  </body>
+</html>

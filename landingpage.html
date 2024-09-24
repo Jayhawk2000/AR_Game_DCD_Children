@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Landing page</title>
+<style>
+    body, html {
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        overflow-x: hidden; /* 防止水平滚动 */
+        overflow-y: auto; /* 允许垂直滚动 */
+    }
+
+    .background {
+        width: 100vw; /* 宽度调整为100% */
+        min-height: 100vh; /* 最小高度为视口高度 */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-attachment: fixed; 
+        position: relative;
+    }
+
+    .content {
+        width: 90vw; /* 宽度使用视口宽度百分比 */
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 5vw; /* 使用视口宽度单位 */
+        padding-top: 5vw; /* 顶部填充 */
+    }
+
+    .text {
+        padding-top: 5vw; /* 顶部填充 */
+        padding-right: 0.1vw; /* 右侧填充 */
+    }
+
+    .welcome {
+        font-size: 4vw; /* 字体大小 */
+        font-weight: bold;
+        color: black;
+        margin-bottom: 2vw; /* 底部边距 */
+    }
+
+    .description {
+        font-size: 2vw; /* 字体大小 */
+        color: #333;
+        line-height: 1.5; /* 行高 */
+    }
+
+    .image img {
+        width: 100%; /* 宽度100% */
+        height: auto; /* 高度自动 */
+    }
+
+    .footer {
+        width: 100%;
+        display: flex;
+        justify-content: center; /* 水平居中 */
+        align-items: flex-end; /* 垂直底部对齐 */
+        position: absolute;
+        bottom: 4vw; /* 距底部的距离 */
+    }
+
+    .next-button {
+        padding: 1vw 4vw; /* 按钮内边距 */
+        font-size: 2vw; /* 字体大小 */
+        background-color: #febb2a;
+        color: white;
+        border: none;
+        border-radius: 1.5vw; /* 边框圆角 */
+        cursor: pointer;
+        transition: box-shadow 0.3s;
+    }
+
+    .next-button:hover {
+        box-shadow: 0 0.8vw 1.6vw 0 rgba(0,0,0,0.2);
+    }
+
+</style>
+</head>
+<body>
+<div class="background" style="background-image: url('img/landingpage.png');">
+    <div class="content">
+        <div class="text">
+            <div class="welcome">Welcome to the Adventure!<br></div>
+            <div class="description">
+                Hey there!<br>
+                Are you ready to become a super mover and shaker?<br>
+                Here, you'll run, balance, and throw like a hero!<br>
+            </div>
+        </div>
+        <div class="image">
+            <img src="img/1.png" alt="Adventure Illustration">
+        </div>
+    </div>
+</div>
+
+<div class="background" style="background-image: url('img/landingpage.png');">
+    <div class="content">
+        <div class="image">
+            <img src="img/2.png" alt="Another Adventure Illustration">
+        </div>
+        <div class="text">
+            <div class="description">
+                Whether you're practicing or taking on a fun<br>
+                challenge, there's always something exciting<br>
+                waiting for you.<br> <br>
+                Get ready, it's time to start your adventure! <br><br> <br>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <button class="next-button" onclick="window.location.href='homepage.html';"><b>Next</b></button>
+    </div>
+</div>
+</body>
+</html>

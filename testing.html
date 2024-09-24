@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Static Balance Training</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100vh; /* Full height of the viewport */
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('img/balance_step.png'); 
+            background-size: cover;
+            background-position: center;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .return-button {
+            position: absolute;
+            top: 2vh;
+            left: 11vw;
+            width: 2.5vw;
+            height: 2.5vw;
+            background: url('img/returnicon.png') no-repeat center center;
+            background-size: contain;
+            border: none;
+            cursor: pointer;
+        }
+
+        .container {
+            width: 80vw; /* Total container width */
+            height: 70vh; /* Total container height */
+            display: flex;
+        }
+
+        .left-section {
+            width: 40vw;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .illustration img {
+            width: 25vw;
+            height: auto;
+        }
+
+
+        .thumbnails {
+            display: flex;
+            width: 25vw; /* Adjusted to match the width of the above image */
+            justify-content: space-between;
+        }
+
+        .thumbnail img {
+            width: 4vw; /* Exact width as requested */
+            height: 6vh; /* Exact height as requested */
+        }
+
+        .right-section {
+            text-align: left;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            padding: 2vw;
+        }
+
+        .button {
+            background-color: #f8d568; /* Yellow background */
+            border: none;
+            color: white;
+            padding: 0.52vw;
+            margin: 0.26vw;
+            font-size: 1.04vw;
+            cursor: pointer;
+            width: 15vw;
+            border-radius: 0.52vw;
+        }
+
+        .button:hover {
+            box-shadow: 0 0.21vw 0.42vw rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+
+<a href="homepage.html" class="return-button"></a>
+
+<div class="container">
+    <div class="left-section">
+        <div class="illustration">
+            <img src="img/prac_bal.png" alt="Main Illustration">
+        </div>
+        <div class="thumbnails">
+            <img src="img/left.png" alt="Left Arrow" class="thumbnail">
+            <img src="img/b1.png" alt="Preview 1" class="thumbnail">
+            <img src="img/b2.png" alt="Preview 2" class="thumbnail">
+            <img src="img/b3.png" alt="Preview 3" class="thumbnail">
+            <img src="img/right.png" alt="Right Arrow" class="thumbnail">
+        </div>
+    </div>
+    <div class="right-section">
+        <p>1. Step by step training</p>
+        <div>
+            <button class="button" onclick="window.location.href='bal_step1.html';">Raise Both Hands</button>
+            <button class="button" onclick="window.location.href='bal_step2.html';">Lift One Foot</button>
+        </div>
+        <p>2. Complete Motion</p>
+        <div>
+            <button class="button" onclick="window.location.href='bal_full.html';">Full Action</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

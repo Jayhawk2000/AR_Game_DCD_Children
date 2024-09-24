@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Preparation</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- 添加居中的标题 -->
+    <h1 class="center-title">Preparation</h1>
+
+    <!-- 显示摄像头画面 -->
+    <video id="video1" autoplay playsinline></video>
+
+    <!-- 用于渲染3D模型的画布 -->
+    <canvas id="three-canvas"></canvas>
+
+    <!-- 添加一个用于显示语音文字的容器 -->
+    <div id="speech-text" class="speech-text"></div>
+
+    <div id="cameraContainer">
+      <div class="button-container">
+        <!-- 返回按钮 -->
+        <button class="button" id="backButton">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M10 19l-7-7 7-7v4h8v6h-8v4z" />
+          </svg>
+        </button>
+
+        <!-- 下一步按钮 -->
+        <button class="button" id="nextButton">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M9 19l7-7-7-7v14z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+
+    <script type="module">
+      import { startCamera } from "./camera.js";
+      startCamera("video1");
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("three-canvas"), alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.position.z = 5;
+
+      const light = new THREE.DirectionalLight(0xffffff, 1.4);
+      light.position.set(2, 2, 5);
+      scene.add(light);
+
+      // 动画剪切的开始和结束时间
+      const startTime = 0; // 3秒开始
+      const endTime = 1; // 6秒结束
+      let currentTime = startTime; // 当前动画时间
+      const slowFactor = 0.5; // 放慢速度系数（0.5表示慢两倍）
+
+      // 加载FBX模型并设置动作切片、循环播放、放慢速度
+      const loader = new THREE.FBXLoader();
+      loader.load(
+        "ForwardJump.fbx",
+        function (object) {
+          object.scale.set(0.04, 0.04, 0.04); // 缩小模型
+          object.position.set(-7, -4, -4); // 确保模型在摄像机前方
+          scene.add(object);
+
+          const mixer = new THREE.AnimationMixer(object);
+          if (object.animations.length > 0) {
+            const action = mixer.clipAction(object.animations[0]);
+            action.play();
+
+            // 渲染循环，控制动画时间
+            function animate() {
+              requestAnimationFrame(animate);
+
+              // 更新动画时间，放慢速度
+              currentTime += 0.01 * slowFactor;
+              mixer.setTime(currentTime);
+
+              // 如果到达结束时间，重置为开始时间
+              if (currentTime >= endTime) {
+                currentTime = startTime;
+              }
+
+              renderer.render(scene, camera);
+            }
+            animate();
+          }
+        },
+        undefined,
+        function (error) {
+          console.error("模型加载失败：", error);
+        }
+      );
+      
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      // 初始化语音合成（Web Speech API）
+      function speak(text, callback) {
+        // 获取语音文本框元素
+        const speechTextElement = document.getElementById("speech-text");
+
+        // 设置显示语音对应的文本
+        speechTextElement.textContent = text;
+        speechTextElement.style.display = "block"; // 显示文本框
+
+        // 创建语音合成对象
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "en-GB"; // 设置语音的语言
+        utterance.pitch = 1.2; // 音高
+        utterance.rate = 1; // 语速
+        utterance.volume = 1; // 音量
+
+        // 获取可用语音列表并选择特定语音
+        const voices = window.speechSynthesis.getVoices();
+
+        // 指定语音的名称（如 "Google US English" 或 "Microsoft Zira - English (United States)"）
+        const specificVoice = voices.find((voice) => voice.name === "Google UK English Female");
+
+        // 如果找到特定语音，则使用它
+        if (specificVoice) {
+          utterance.voice = specificVoice;
+        } else {
+          console.warn("指定的语音未找到，使用默认语音。");
+        }
+
+        // 语音播放结束时执行回调，并清空文本框
+        utterance.onend = function () {
+          speechTextElement.textContent = "";
+          speechTextElement.style.display = "none"; // 隐藏文本框
+          if (callback) {
+            callback(); // 执行回调函数，播放下一条语音
+          }
+        };
+
+        // 播放语音
+        window.speechSynthesis.speak(utterance);
+      }
+
+      // 页面加载时播放的欢迎语
+      let welcomeSpeech = [
+        "Hello, boys and girls, welcome to the preparation of jump!",
+        "Stand far away so you can see your whole body on the screen!",
+        "Let's follow the character! Ready?",
+        "Swing and spring your arms, getting ready to jump far!",
+      ];
+
+      let index = 0;
+
+      // 定义播放语音队列的函数
+      function playSpeechQueue() {
+        if (index < welcomeSpeech.length) {
+          speak(welcomeSpeech[index], () => {
+            index++;
+            setTimeout(playSpeechQueue, 3000); // 延时3秒播放下一条
+          });
+        } else {
+          // 如果播放完所有语音条目，等待5秒并重新开始
+          index = 0; // 重置索引
+          setTimeout(playSpeechQueue, 5000); // 延时5秒重新播放整个语音
+        }
+      }
+
+      window.onload = function () {
+        // 等待语音加载完成
+        window.speechSynthesis.onvoiceschanged = function () {
+          // 延时3秒播放第一句
+          setTimeout(playSpeechQueue, 3000);
+        };
+
+        // 监听页面关闭或切换事件，停止语音播放
+        window.onbeforeunload = function () {
+          window.speechSynthesis.cancel(); // 停止当前的语音合成
+        };
+      };
+
+      const backButton = document.getElementById("backButton");
+      backButton.addEventListener("click", () => {
+        window.location.href = "index.html";
+      });
+
+      const nextButton = document.getElementById("nextButton");
+      nextButton.addEventListener("click", () => {
+        window.location.href = "Propulsion.html";
+      });
+    </script>
+  </body>
+</html>

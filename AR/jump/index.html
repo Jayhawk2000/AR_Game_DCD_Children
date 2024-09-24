@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Main Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+
+    .main-page {
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 48px;
+      color: #333;
+    }
+
+    p {
+      font-size: 20px;
+      color: #666;
+      margin-bottom: 30px;
+    }
+
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .button {
+      font-size: 18px;
+      padding: 10px 20px;
+      background-color: #FFB000;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #e09e00;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="main-page">
+    <h1>Jump</h1>
+    <p>Welcome to the main page of jump!</p>
+
+    <div class="button-container">
+      <button class="button" onclick="location.href='FullAction.html'">Full Action</button>
+      <button class="button" onclick="location.href='Preparation.html'">Preparation</button>
+      <button class="button" onclick="location.href='Propulsion.html'">Propulsion</button>
+      <button class="button" onclick="location.href='Landing.html'">Landing</button>
+    </div>
+  </div>
+
+</body>
+</html>
