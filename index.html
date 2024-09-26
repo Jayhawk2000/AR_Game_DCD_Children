@@ -9,13 +9,19 @@
         margin: 0;
         padding: 0;
         font-family: Arial, sans-serif;
-        overflow-x: hidden; /* 防止水平滚动 */
-        overflow-y: auto; /* 允许垂直滚动 */
+        overflow-x: hidden; /* 防止用户自己滚动 */
+        overflow-y: hidden; /* 防止垂直滚动 */
     }
 
+    .backgrounds {
+    display: flex;
+    flex-direction: row;
+    min-width: 200vw; /* 保证有足够的宽度容纳两个背景 */
+}
+
     .background {
-        width: 100vw; /* 宽度调整为100% */
-        min-height: 100vh; /* 最小高度为视口高度 */
+        width: 100vw; /* 每个背景占满整个视口宽度 */
+        min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -23,6 +29,7 @@
         background-size: cover;
         background-attachment: fixed; 
         position: relative;
+        flex-shrink: 0; /* 防止背景被压缩 */
     }
 
     .content {
@@ -84,39 +91,54 @@
 </style>
 </head>
 <body>
-<div class="background" style="background-image: url('img/landingpage.png');">
-    <div class="content">
-        <div class="text">
-            <div class="welcome">Welcome to the Adventure!<br></div>
-            <div class="description">
-                Hey there!<br>
-                Are you ready to become a super mover and shaker?<br>
-                Here, you'll run, balance, and throw like a hero!<br>
+
+<div class="backgrounds">
+    <div class="background" style="background-image: url('img/landingpage.png');">
+        <div class="content">
+            <div class="text">
+                <div class="welcome">Welcome to the Adventure!<br></div>
+                <div class="description">
+                    Hey there!<br>
+                    Are you ready to become a super mover and shaker?<br>
+                    Here, you'll run, balance, and throw like a hero!<br>
+                </div>
+            </div>
+            <div class="image">
+                <img src="img/1.png" alt="Adventure Illustration">
             </div>
         </div>
-        <div class="image">
-            <img src="img/1.png" alt="Adventure Illustration">
+    </div>
+    <div class="background" style="background-image: url('img/landingpage.png');">
+        <div class="content">
+            <div class="image">
+                <img src="img/2.png" alt="Another Adventure Illustration">
+            </div>
+            <div class="text">
+                <div class="description">
+                    Whether you're practicing or taking on a fun<br>
+                    challenge, there's always something exciting<br>
+                    waiting for you.<br> <br>
+                    Get ready, it's time to start your adventure! <br><br> <br>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <button class="next-button" onclick="window.location.href='homepage.html';"><b>Next</b></button>
         </div>
     </div>
 </div>
 
-<div class="background" style="background-image: url('img/landingpage.png');">
-    <div class="content">
-        <div class="image">
-            <img src="img/2.png" alt="Another Adventure Illustration">
-        </div>
-        <div class="text">
-            <div class="description">
-                Whether you're practicing or taking on a fun<br>
-                challenge, there's always something exciting<br>
-                waiting for you.<br> <br>
-                Get ready, it's time to start your adventure! <br><br> <br>
-            </div>
-        </div>
-    </div>
-    <div class="footer">
-        <button class="next-button" onclick="window.location.href='homepage.html';"><b>Next</b></button>
-    </div>
-</div>
+<script>
+    // More robust way to scroll exactly one viewport width
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        const secondBackground = document.querySelectorAll('.background')[1];
+        if(secondBackground) {
+            secondBackground.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, 3000);
+});
+
+</script>
 </body>
 </html>

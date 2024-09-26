@@ -76,13 +76,13 @@
             box-shadow: 0 0.21vw 0.42vw rgba(0,0,0,0.3);
         }
 
-        .arrow {
+        .staticarrow {
             width: 3vw;
             height: 12vh;
             margin: 0 0.5vw;
         }
 
-        .arrow:hover {
+        .staticarrow:hover {
             box-shadow: 0 0.21vw 0.42vw rgba(0,0,0,0.3);
         }
 
@@ -124,6 +124,35 @@
         h3 {
             font-size: 1.5vw;
             margin: 1vw 0;
+        }
+
+        .arrow {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            padding: 16px;
+            margin-top: -50px;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+            transition: 0.6s ease;
+            border-radius: 0 3px 3px 0;
+            user-select: none;
+        }
+
+        .left-arrow {
+            left: 30vw;
+            border-radius: 3px 0 0 3px;
+        }
+
+        .right-arrow {
+            right: 30vw;
+            border-radius: 0 3px 3px 0;
+        }
+
+        .arrow:hover {
+            background-color: rgba(0, 0, 0, 0.8);
         }
 
         /* Style the image modal (lightbox effect) */
@@ -192,11 +221,11 @@
             <img src="img/prac_jump.png" alt="Main Illustration">
         </div>
         <div class="thumbnails">
-            <img class="arrow" src="img/left.png">
-            <img src="img/j1.png" alt="Preview 1" class="thumbnail" onclick="openModal(this.src)">
-            <img src="img/j2.png" alt="Preview 2" class="thumbnail" onclick="openModal(this.src)">
-            <img src="img/j3.png" alt="Preview 3" class="thumbnail" onclick="openModal(this.src)">
-            <img class="arrow" src="img/right.png">
+            <img class="staticarrow" src="img/left.png">
+            <img src="img/j1.png" alt="Preperation" class="thumbnail" onclick="openModal(this.src)">
+            <img src="img/j2.png" alt="Propulsion" class="thumbnail" onclick="openModal(this.src)">
+            <img src="img/j3.png" alt="Landing" class="thumbnail" onclick="openModal(this.src)">
+            <img class="staticarrow" src="img/right.png">
         </div>
     </div>
     <div class="right-section">
@@ -216,24 +245,46 @@
     <!-- Modal for displaying enlarged images -->
     <div id="myModal" class="modal">
         <span class="close">&times;</span>
+        <span class="arrow left-arrow" onclick="changeImage(-1)">&#10094;</span>
         <img class="modal-content" id="img01">
+        <span class="arrow right-arrow" onclick="changeImage(1)">&#10095;</span>
         <div id="caption"></div>
     </div>
+    
 
     <script>
+        let currentIndex = 0; // 当前图片的索引
+        const images = document.querySelectorAll(".thumbnail"); // 所有的缩略图元素
+
         function openModal(src) {
+            currentIndex = Array.from(images).findIndex(img => img.src === src);
+            showModal(currentIndex);
+        }
+
+        function showModal(index) {
             var modal = document.getElementById("myModal");
             var modalImg = document.getElementById("img01");
             var captionText = document.getElementById("caption");
             modal.style.display = "block";
-            modalImg.src = src;
-            captionText.innerHTML = document.querySelector("[src='" + src + "']").alt;
+            modalImg.src = images[index].src;
+            captionText.innerHTML = images[index].alt;
 
             var span = document.getElementsByClassName("close")[0];
             span.onclick = function() {
                 modal.style.display = "none";
             }
         }
+
+        function changeImage(step) {
+            currentIndex += step;
+            if (currentIndex >= images.length) {
+                currentIndex = 0; // 循环到第一张图
+            } else if (currentIndex < 0) {
+                currentIndex = images.length - 1; // 循环到最后一张图
+            }
+            showModal(currentIndex);
+        }
+
     </script>
 
 </body>

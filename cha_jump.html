@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Balance Practice</title>
+    <title>Jump Challenge</title>
     <link rel="stylesheet" href="style.css">
     <style>
         body, html {
@@ -15,7 +15,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-image: url('img/bal.png'); 
+            background-image: url('img/jump_c.png'); 
             background-size: cover;
             background-position: center;
             font-family: 'Arial', sans-serif;
@@ -23,7 +23,7 @@
 
         .container {
             width: 78vw;
-            height: 70vh;
+            height: 75vh;
             border-radius: 10px;
             background-color: rgba(200, 200, 200, 0.3);
             display: flex;
@@ -32,7 +32,7 @@
 
         .return-button {
             position: absolute;
-            top: 2vh;
+            top: 3vh;
             left: 11vw;
             width: 2.5vw;
             height: 2.5vw;
@@ -42,8 +42,7 @@
             cursor: pointer;
         }
 
-    
-
+        
         .left-section {
             width: 38%;
             display: flex;
@@ -56,7 +55,7 @@
             width:25vw;
             height: auto;
             border-radius: 10px;
-            padding: 2vw;
+            padding: 1vw 2vw;
         }
 
         .thumbnails {
@@ -64,6 +63,7 @@
             width: 100%;
             justify-content: center;
             align-items: center;
+            padding-bottom: 1vw;
         }
 
         .thumbnail {
@@ -100,7 +100,7 @@
             padding: 1vw;
             margin: 0.5vw;
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: 10px;
             font-weight: bold;
             width: 13vw;
             font-size: 1.2vw;
@@ -110,20 +110,25 @@
         }
 
 
-        h1 {
-            
-            padding-top: 2vh;
+        p1 {
+            padding-top: 4vh;
             font-size: 2vw;
+            margin-bottom: 2vh;
         }
 
-        h2 {
+        p2 {
             font-size: 1.5vw;
             color: #666;
+            margin-bottom: 2vh;
+            
         }
 
-        h3 {
-            font-size: 1.5vw;
-            margin: 1vw 0;
+        p3 {
+            font-size: 1.2vw;
+            line-height: 2.5vw;
+            color: #666;
+            font-weight: lighter;
+            margin-bottom: 2vh;
         }
 
         .arrow {
@@ -208,6 +213,9 @@
             text-decoration: none;
             cursor: pointer;
         }
+        .stars {
+            color: #f8d568; /* Change color to gold */
+        }
 
 
 
@@ -218,29 +226,28 @@
 <div class="container">
     <div class="left-section">
         <div class="illustration">
-            <img src="img/prac_bal.png" alt="Main Illustration">
+            <img src="img/cha_jump.png" alt="Main Illustration">
         </div>
         <div class="thumbnails">
             <img class="staticarrow" src="img/left.png">
-            <img src="img/b1.png" alt="Raise Both Hands" class="thumbnail" onclick="openModal(this.src)">
-            <img src="img/b2.png" alt="Lift One Foot" class="thumbnail" onclick="openModal(this.src)">
-            <img src="img/b3.png" alt="Keep Balance" class="thumbnail" onclick="openModal(this.src)">
+            <img src="img/jc1.png" alt=" " class="thumbnail" onclick="openModal(this.src)">
+            <img src="img/jc2.png" alt=" " class="thumbnail" onclick="openModal(this.src)">
             <img class="staticarrow" src="img/right.png">
         </div>
+        <button class="button" onclick="window.location.href='http://example.com';">Start</button>
     </div>
     <div class="right-section">
-        <h1 >Static Balance</h1>
-        <h2>Genre: Practice</h2>
-        <div class="training-steps">
-            <h3>1. Step by step training</h3>
-            <button class="button" onclick="window.location.href='bal_step1.html';">Raise Both Hands</button>
-            <button class="button" onclick="window.location.href='bal_step2.html';">Lift One Foot</button>
-            <button class="button" onclick="window.location.href='bal_step3.html';">Keep Balance</button>
-        </div>
-        <div class="complete-motion">
-            <h3>2. Complete Motion</h3>
-            <button class="button" onclick="window.location.href='bal_full.html';">Full Action</button>
-        </div>
+        <p1><b>Jump</b></p1>
+        <p2><b>Genre: Challenge</b></p2>
+        <p2><b>Level: </b><span class="stars">&#9733;&#9733;&#9733;</span></p2>
+        <p3><b>Introduction:</b><br>
+            After the game starts, the following instructions will appear at the top of the screen: <br>
+            1. Please <ins>show your full body</ins> and <ins>hold the position</ins> for five seconds.<br>
+            2. Please slightly bend your knees and <ins>squat</ins> holding the position for three seconds.<br>
+            3. Please push off the ground and <ins>jump</ins>.  <br> </p3>
+         <p3><b>Tips: </b>The higher you jump and the longer you keep your feet apart, the higher your score will be.
+        </p3>
+        
     </div>
     <!-- Modal for displaying enlarged images -->
     <div id="myModal" class="modal">
@@ -286,7 +293,6 @@
         }
 
     </script>
-
 
 </body>
 </html>

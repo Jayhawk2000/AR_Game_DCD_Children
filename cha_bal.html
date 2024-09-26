@@ -23,7 +23,7 @@
 
         .container {
             width: 78vw;
-            height: 70vh;
+            height: 75vh;
             border-radius: 10px;
             background-color: rgba(200, 200, 200, 0.3);
             display: flex;
@@ -32,7 +32,7 @@
 
         .return-button {
             position: absolute;
-            top: 2vh;
+            top: 3vh;
             left: 11vw;
             width: 2.5vw;
             height: 2.5vw;
@@ -43,7 +43,6 @@
         }
 
         
-
         .left-section {
             width: 38%;
             display: flex;
@@ -56,7 +55,7 @@
             width:25vw;
             height: auto;
             border-radius: 10px;
-            padding: 0.7vw 2vw;
+            padding: 1vw 2vw;
         }
 
         .thumbnails {
@@ -64,7 +63,7 @@
             width: 100%;
             justify-content: center;
             align-items: center;
-            padding-bottom: 0.5vw;
+            padding-bottom: 1vw;
         }
 
         .thumbnail {
@@ -77,15 +76,16 @@
             box-shadow: 0 0.21vw 0.42vw rgba(0,0,0,0.3);
         }
 
-        .arrow {
+        .staticarrow {
             width: 3vw;
             height: 12vh;
             margin: 0 0.5vw;
         }
 
-        .arrow:hover {
+        .staticarrow:hover {
             box-shadow: 0 0.21vw 0.42vw rgba(0,0,0,0.3);
         }
+
 
         .right-section {
             flex: 1;
@@ -111,24 +111,53 @@
         }
 
 
-        h1 {
-            
-            padding-top: 2vh;
+        p1 {
+            padding-top: 4vh;
             font-size: 2vw;
+            margin-bottom: 2vh;
         }
 
-        h2 {
+        p2 {
             font-size: 1.5vw;
             color: #666;
+            margin-bottom: 2vh;
             
         }
 
-        h3 {
+        p3 {
             font-size: 1.2vw;
             line-height: 2.5vw;
             color: #666;
             font-weight: lighter;
-    
+            margin-bottom: 2vh;
+        }
+        .arrow {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            padding: 16px;
+            margin-top: -50px;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+            transition: 0.6s ease;
+            border-radius: 0 3px 3px 0;
+            user-select: none;
+        }
+
+        .left-arrow {
+            left: 30vw;
+            border-radius: 3px 0 0 3px;
+        }
+
+        .right-arrow {
+            right: 30vw;
+            border-radius: 0 3px 3px 0;
+        }
+
+        .arrow:hover {
+            background-color: rgba(0, 0, 0, 0.8);
         }
 
         /* Style the image modal (lightbox effect) */
@@ -200,47 +229,70 @@
             <img src="img/cha_bal.png" alt="Main Illustration">
         </div>
         <div class="thumbnails">
-            <img class="arrow" src="img/left.png">
-            <img src="img/bc1.png" alt="Preview 1" class="thumbnail" onclick="openModal(this.src)">
-            <img src="img/bc2.png" alt="Preview 2" class="thumbnail" onclick="openModal(this.src)">
-            <img class="arrow" src="img/right.png">
+            <img class="staticarrow" src="img/left.png">
+            <img src="img/bc1.png" alt=" " class="thumbnail" onclick="openModal(this.src)">
+            <img src="img/bc2.png" alt=" " class="thumbnail" onclick="openModal(this.src)">
+            <img class="staticarrow" src="img/right.png">
         </div>
-        <button class="button" onclick="window.location.href='challenge/balance/index.html';">Start</button>
+        <button class="button" onclick="window.location.href='http://example.com';">Start</button>
     </div>
     <div class="right-section">
-        <h1>Static Balance</h1>
-        <h2>Genre: Challenge</h2>
-        <h2>Level: <span class="stars">&#9733;&#9733;&#9733;</span></h2>
-        <h3><b>Introduction:</b><br>
+        <p1><b>Static Balance</b></p1>
+        <p2><b>Genre: Challenge</b></p2>
+        <p2><b>Level: </b> <span class="stars">&#9733;&#9733;&#9733;</span></p2>
+        <p3><b>Introduction:</b><br>
             After the game starts, the following instructions will appear at the top of the screen: <br>
             1. Please show your full body and stay in position for five seconds. <br>
-            2. Please <ins>lift one foot and both arms</ins>, and <ins>hold the position</ins> for five seconds. <br><br>
-            <b> Tips: </b>The higher you raise your arms, the more stable your body will be, and the higher your score will be.
-        </h3>
+            2. Please <ins>lift one foot and both arms</ins>, and <ins>hold the position</ins> for five seconds.</p3>
+        <p3><b> Tips: </b>The higher you raise your arms, the more stable your body will be, and the higher your score will be.
+        </p3>
         
     </div>
     <!-- Modal for displaying enlarged images -->
     <div id="myModal" class="modal">
         <span class="close">&times;</span>
+        <span class="arrow left-arrow" onclick="changeImage(-1)">&#10094;</span>
         <img class="modal-content" id="img01">
+        <span class="arrow right-arrow" onclick="changeImage(1)">&#10095;</span>
         <div id="caption"></div>
     </div>
+    
 
     <script>
+        let currentIndex = 0; // 当前图片的索引
+        const images = document.querySelectorAll(".thumbnail"); // 所有的缩略图元素
+
         function openModal(src) {
+            currentIndex = Array.from(images).findIndex(img => img.src === src);
+            showModal(currentIndex);
+        }
+
+        function showModal(index) {
             var modal = document.getElementById("myModal");
             var modalImg = document.getElementById("img01");
             var captionText = document.getElementById("caption");
             modal.style.display = "block";
-            modalImg.src = src;
-            captionText.innerHTML = document.querySelector("[src='" + src + "']").alt;
+            modalImg.src = images[index].src;
+            captionText.innerHTML = images[index].alt;
 
             var span = document.getElementsByClassName("close")[0];
             span.onclick = function() {
                 modal.style.display = "none";
             }
         }
+
+        function changeImage(step) {
+            currentIndex += step;
+            if (currentIndex >= images.length) {
+                currentIndex = 0; // 循环到第一张图
+            } else if (currentIndex < 0) {
+                currentIndex = images.length - 1; // 循环到最后一张图
+            }
+            showModal(currentIndex);
+        }
+
     </script>
+
 
 </body>
 </html>
