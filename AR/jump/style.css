@@ -99,3 +99,19 @@ canvas {
     max-width: 80%;
     z-index: 2;
 }
+
+.instruction-text {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.5rem;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px 20px;
+    border-radius: 10px;
+    text-align: center;
+    font-family: Roboto, sans-serif;
+    max-width: 80%;
+    z-index: 2;
+}

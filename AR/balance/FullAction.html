@@ -7,48 +7,60 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- 添加居中的标题 -->
+    <!-- Centered title -->
     <h1 class="center-title">Full Action</h1>
 
-    <!-- 显示摄像头画面 -->
+    <!-- Video element to display the camera feed -->
     <video id="video3" autoplay playsinline></video>
 
-    <!-- 用于渲染3D模型的画布 -->
+    <!-- Canvas element to render the 3D model -->
     <canvas id="three-canvas"></canvas>
 
-    <!-- 添加一个用于显示语音文字的容器 -->
+    <!-- Container to display the speech text -->
     <div id="speech-text" class="speech-text"></div>
+    
+    <!-- Textbox to prompt the user to click the speaker button -->
+    <div id="instruction-text" class="instruction-text">Click the sound button to play the voice prompt</div>
 
+    <!-- Importing Three.js and required scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
 
     <div id="cameraContainer">
       <div class="button-container">
-        <!-- 返回按钮 -->
+        <!-- Back button -->
         <button class="button" id="backButton">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M10 19l-7-7 7-7v4h8v6h-8v4z" />
           </svg>
         </button>
 
-        <!-- 上一步按钮 -->
+        <!-- Previous step button -->
         <button class="button" id="previousButton">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M15 19l-7-7 7-7v14z" />
           </svg>
         </button>
+        
+        <!-- Speaker button -->
+        <button class="button" id="playSoundButton">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+              d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-.73-3.37-1.91-4.5l-1.42 1.42C14.2 9.98 14.5 10.96 14.5 12s-.3 2.02-.83 2.58l1.42 1.42c1.18-1.13 1.91-2.73 1.91-4.5zM18.5 12c0-3.04-1.23-5.79-3.22-7.78l-1.42 1.42C15.96 6.79 17 9.3 17 12s-1.04 5.21-2.64 6.36l1.42 1.42C17.27 17.79 18.5 15.04 18.5 12z" />
+          </svg>
+        </button>
       </div>
     </div>
 
-    <!-- 导入摄像头管理脚本 -->
+    <!-- Importing camera management script -->
     <script type="module">
       import { startCamera } from "./camera.js";
 
-      // 使用camera.js中的函数启动摄像头
+      // Start the camera using the function from camera.js
       startCamera("video3");
 
-      // 初始化Three.js
+      // Initialize Three.js
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
       const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("three-canvas"), alpha: true });
@@ -56,105 +68,117 @@
 
       camera.position.z = 5;
 
-      // 添加光源
+      // Add a light source
       const light = new THREE.DirectionalLight(0xffffff, 1.8);
       light.position.set(0, 1, 1).normalize();
       scene.add(light);
 
-      // 动画切片的开始和结束时间
-      const startTime = 0; // 开始时间 (秒)
-      const endTime = 1.12; // 结束时间 (秒)
-      let currentTime = startTime; // 当前动画时间
-      const slowFactor = 0.6; // 放慢速度的系数 (0.5 表示慢两倍)
+      // Animation slice start and end times
+      const startTime = 0; // Start time (in seconds)
+      const endTime = 1.12; // End time (in seconds)
+      let currentTime = startTime; // Current animation time
+      const slowFactor = 0.6; // Slow down factor (0.6 means 60% slower)
 
-      // 加载FBX模型并设置动作切片、循环播放、放慢速度
+      // Load FBX model and set the animation slice, loop, and slow down
       const loader = new THREE.FBXLoader();
       loader.load(
-        "CanCan.fbx",
+        "CanCan.fbx",  // Replace with the correct path to your FBX file
         function (object) {
-          object.scale.set(0.04, 0.04, 0.04); // 缩小模型
-          object.position.set(-7, -4, -3.5); // 确保模型位于摄像机前方
+          object.scale.set(0.04, 0.04, 0.04); // Scale the model
+          object.position.set(-7, -4, -3.5); // Position the model in front of the camera
           scene.add(object);
 
-          const mixer = new THREE.AnimationMixer(object);
+          const mixer = new THREE.AnimationMixer(object);  // Create an animation mixer for the model
           if (object.animations.length > 0) {
-            const action = mixer.clipAction(object.animations[0]);
+            const action = mixer.clipAction(object.animations[0]); // Play the first animation
             action.play();
 
-            // 渲染循环
+            // Animation loop
             function animate() {
               requestAnimationFrame(animate);
 
-              // 更新动画时间，放慢速度
+              // Update the animation time, slowed down
               currentTime += 0.01 * slowFactor;
               mixer.setTime(currentTime);
 
-              // 如果到达结束时间，重置为开始时间
+              // Reset to start time if the animation ends
               if (currentTime >= endTime) {
                 currentTime = startTime;
               }
 
-              renderer.render(scene, camera);
+              renderer.render(scene, camera); // Render the scene
             }
             animate();
           }
         },
         undefined,
         function (error) {
-          console.error("模型加载失败：", error);
+          console.error("Model loading failed:", error); // Error handling for model loading
         }
       );
 
-      // 调整窗口大小
+      // Adjust the window size
       window.addEventListener("resize", () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
       });
 
-      // 初始化语音合成（Web Speech API）
+      // Initialize Speech Synthesis (Web Speech API)
+      let voices = [];
+
+      function initializeVoices() {
+        voices = window.speechSynthesis.getVoices();
+      }
+
+      // Update the voice list when it changes
+      window.speechSynthesis.onvoiceschanged = initializeVoices;
+
       function speak(text, callback) {
-        // 获取语音文本框元素
+        // Get the speech text container
         const speechTextElement = document.getElementById("speech-text");
 
-        // 设置显示语音对应的文本
+        // Set the displayed text corresponding to the speech
         speechTextElement.textContent = text;
-        speechTextElement.style.display = "block"; // 显示文本框
+        speechTextElement.style.display = "block"; // Show the text box
 
-        // 创建语音合成对象
+        // Create a SpeechSynthesisUtterance object
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = "en-GB"; // 设置语音的语言
-        utterance.pitch = 1.2; // 音高
-        utterance.rate = 1; // 语速
-        utterance.volume = 1; // 音量
+        utterance.pitch = 1.2; // Set pitch
+        utterance.rate = 1; // Set speech rate
+        utterance.volume = 1; // Set volume
+        utterance.lang = "en"; // Set language to English
 
-        // 获取可用语音列表并选择特定语音
-        const voices = window.speechSynthesis.getVoices();
+        // Choose a specific voice based on browser availability
+        let specificVoice = null;
 
-        // 指定语音的名称（如 "Google US English" 或 "Microsoft Zira - English (United States)"）
-        const specificVoice = voices.find((voice) => voice.name === "Google UK English Female");
+        if (navigator.userAgent.includes("Chrome")) {
+          specificVoice = voices.find((voice) => voice.name === "Google UK English Female");
+        } else if (navigator.userAgent.includes("Safari")) {
+          specificVoice = voices.find((voice) => voice.name === "Samantha");
+        } else {
+          specificVoice = voices.find((voice) => voice.gender === "female");
+        }
 
-        // 如果找到特定语音，则使用它
+        // Set the chosen voice
         if (specificVoice) {
           utterance.voice = specificVoice;
         } else {
-          console.warn("指定的语音未找到，使用默认语音。");
+          console.warn("Specific voice not found, using default.");
         }
 
-        // 语音播放结束时执行回调，并清空文本框
+        // Clear the text box and run callback after speech ends
         utterance.onend = function () {
-          speechTextElement.textContent = "";
-          speechTextElement.style.display = "none"; // 隐藏文本框
-          if (callback) {
-            callback(); // 执行回调函数，播放下一条语音
-          }
+          speechTextElement.textContent = ""; // Clear the text box
+          speechTextElement.style.display = "none"; // Hide the text box
+          if (callback) callback(); // Run callback if provided
         };
 
-        // 播放语音
+        // Play the speech
         window.speechSynthesis.speak(utterance);
       }
 
-      // 页面加载时播放的欢迎语
+      // Predefined welcome speech for the page load
       let welcomeSpeech = [
         "Hello, boys and girls, welcome to the full action of balance!",
         "Stand far away so you can see your whole body on the screen!",
@@ -165,45 +189,59 @@
         "Step 4: Keep your balance, hold for 5 seconds! You’re doing great!"
       ];
 
-      let index = 0;
+      let speechTimeouts = [];
+      let loopInterval = null;
 
-      // 定义播放语音队列的函数
-      function playSpeechQueue() {
-        if (index < welcomeSpeech.length) {
-          speak(welcomeSpeech[index], () => {
-            index++;
-            setTimeout(playSpeechQueue, 3000); // 延时3秒播放下一条
-          });
-        } else {
-          // 如果播放完所有语音条目，等待5秒并重新开始
-          index = 0; // 重置索引
-          setTimeout(playSpeechQueue, 5000); // 延时5秒重新播放整个语音
-        }
-      }
+      // Bind speaker button click event
+      const playSoundButton = document.getElementById("playSoundButton");
+      playSoundButton.addEventListener("click", () => {
+        // Cancel any ongoing speech playback
+        window.speechSynthesis.cancel();
 
-      window.onload = function () {
-        // 等待语音加载完成
-        window.speechSynthesis.onvoiceschanged = function () {
-          // 延时3秒播放第一句
-          setTimeout(playSpeechQueue, 3000);
-        };
+        // Hide the instruction text
+        document.getElementById("instruction-text").style.display = "none";
 
-        // 监听页面关闭或切换事件，停止语音播放
-        window.onbeforeunload = function () {
-          window.speechSynthesis.cancel(); // 停止当前的语音合成
-        };
-      };
-
-      // 点击返回按钮后跳转到 index.html
-      const backButton = document.getElementById("backButton");
-      backButton.addEventListener("click", () => {
-        window.location.href = "../../bal_full.html"; // 跳转到index.html页面
+        // Start playing the welcome speeches from the beginning
+        playSpeeches();
       });
 
-      // 点击上一步按钮后跳转到 LiftOneFoot.html
+      function playSpeeches() {
+        clearSpeechTimeouts();
+
+        let index = 0;
+        function playNextSpeech() {
+          if (index < welcomeSpeech.length) {
+            speak(welcomeSpeech[index], () => {
+              index++;
+              if (index < welcomeSpeech.length) {
+                setTimeout(playNextSpeech, 2000); // Wait for 2 seconds before the next speech
+              }
+            });
+          }
+        }
+        playNextSpeech();
+      }
+
+      function clearSpeechTimeouts() {
+        speechTimeouts.forEach((timeout) => clearTimeout(timeout));
+      }
+
+      // Stop speech when leaving or closing the page
+      window.addEventListener("beforeunload", () => {
+        clearSpeechTimeouts();
+        window.speechSynthesis.cancel();
+      });
+
+      // Navigate to index.html when the back button is clicked
+      const backButton = document.getElementById("backButton");
+      backButton.addEventListener("click", () => {
+        window.location.href = "../../prac_bal.html"; // Redirect to index.html
+      });
+
+      // Navigate to LiftOneFoot.html when the previous button is clicked
       const previousButton = document.getElementById("previousButton");
       previousButton.addEventListener("click", () => {
-        window.location.href = "LiftOneFoot.html"; // 跳转到LiftOneFoot.html页面
+        window.location.href = "../../bal_step3.html"; // Redirect to LiftOneFoot.html
       });
     </script>
   </body>

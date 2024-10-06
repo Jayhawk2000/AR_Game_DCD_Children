@@ -14,16 +14,16 @@
     }
 
     .background {
-    background-image: url('img/homepage.png');
-    background-size: 100vw 100vh; /* 宽度和高度根据视窗大小变化 */
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-attachment: fixed;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+        background-image: url('img/homepage.png');
+        background-size: 100vw 100vh; 
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-attachment: fixed;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
     .content {
         width: 75vw;
@@ -31,7 +31,7 @@
         background-color: white;
         display: flex;
         flex-direction: column;
-        padding-top: 5vh;
+        padding: 5vh;
     }
 
     .section {
@@ -71,11 +71,12 @@
     }
     .card {
         flex: 0 0 auto;
-        width: 34vw; 
-        height: 22vh; 
+        width: 38vw; 
+        height: 24vh; 
         background-color: #f9f9f9;
         border: 0.1vw solid #ddd; 
-        padding: 1.05vw; 
+        padding: 1vw; 
+        
         scroll-snap-align: start;
         border-radius: 0.5vw;
         box-shadow: 0 0.2vw 0.3vw rgba(0,0,0,0.1);
@@ -84,7 +85,10 @@
         cursor: pointer;
         transition: box-shadow 0.3s ease;
     }
-
+    .card img {
+    width: calc(100% - 4vw); /* 图片宽度为容器宽度减去两边留白 */
+    height: auto; /* 高度自适应以保持图像比例 */
+}
     .card:hover {
         box-shadow: 0 0.31vw 0.63vw rgba(0,0,0,0.3);
     }
@@ -96,7 +100,7 @@
 <div class="background">
     <div class="content">
         <div class="section">
-            <br><br><br><br>
+            <br><br><br>
             <div class="title"><b>Practice</b></div>
             <div class="card-slider">
                 <a href="prac_bal.html" class="card" style="background-image: url('img/balance_practice.png');"></a>
