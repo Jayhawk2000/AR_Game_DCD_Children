@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive AR-like Experience</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+      #info {
+        position: absolute;
+        top: 10px;
+        width: 100%;
+        text-align: center;
+        z-index: 100;
+        color: white;
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 5px;
+      }
+      #startButton {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="info">Interactive AR-like Experience</div>
+    <button id="startButton">Start Camera</button>
+    <script>
+      let camera, scene, renderer;
+      let video, videoTexture, videoMaterial;
+      let cubes = [];
+      let isPlacingMode = false;
+
+      const startButton = document.getElementById("startButton");
+      startButton.addEventListener("click", initAR);
+
+      function initAR() {
+        startButton.style.display = "none";
+        document.getElementById("info").textContent =
+          "Requesting camera permission...";
+
+        // 请求摄像头权限
+        navigator.mediaDevices
+          .getUserMedia({ video: { facingMode: "environment" } })
+          .then(function (stream) {
+            document.getElementById("info").textContent =
+              "Tap anywhere to place a cube";
+            video = document.createElement("video");
+            video.srcObject = stream;
+            video.play();
+
+            init();
+            animate();
+          })
+          .catch(function (error) {
+            console.error("Unable to access the camera/webcam.", error);
+            document.getElementById("info").textContent =
+              "Camera access denied. Please reload and try again.";
+          });
+      }
+
+      function init() {
+        scene = new THREE.Scene();
+
+        camera = new THREE.PerspectiveCamera(
+          75,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          1000
+        );
+        camera.position.z = 5;
+
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // 创建视频纹理
+        videoTexture = new THREE.VideoTexture(video);
+        videoMaterial = new THREE.MeshBasicMaterial({ map: videoTexture });
+        let videoGeometry = new THREE.PlaneGeometry(16, 9);
+        videoGeometry.scale(0.5, 0.5, 0.5);
+        let videoMesh = new THREE.Mesh(videoGeometry, videoMaterial);
+        videoMesh.position.z = -5;
+        scene.add(videoMesh);
+
+        // 添加光源
+        const light = new THREE.PointLight(0xffffff, 1, 100);
+        light.position.set(0, 0, 10);
+        scene.add(light);
+
+        window.addEventListener("resize", onWindowResize, false);
+        document.addEventListener("click", onDocumentClick, false);
+
+        isPlacingMode = true;
+      }
+
+      function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      function onDocumentClick(event) {
+        if (!isPlacingMode) return;
+
+        event.preventDefault();
+
+        let mouse = new THREE.Vector2();
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        let raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(mouse, camera);
+
+        let intersects = raycaster.intersectObjects(scene.children);
+
+        if (intersects.length > 0) {
+          let intersectionPoint = intersects[0].point;
+          addCube(intersectionPoint);
+        }
+      }
+
+      function addCube(position) {
+        let geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+        let material = new THREE.MeshPhongMaterial({
+          color: Math.random() * 0xffffff,
+        });
+        let cube = new THREE.Mesh(geometry, material);
+        cube.position.copy(position);
+        scene.add(cube);
+        cubes.push(cube);
+
+        document.getElementById(
+          "info"
+        ).textContent = `Cube placed! (${cubes.length} cubes total)`;
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        // 更新视频纹理
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+          videoTexture.needsUpdate = true;
+        }
+
+        // 旋转所有立方体
+        cubes.forEach((cube) => {
+          cube.rotation.x += 0.01;
+          cube.rotation.y += 0.01;
+        });
+
+        renderer.render(scene, camera);
+      }
+    </script>
+  </body>
+</html>

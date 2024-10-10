@@ -94,6 +94,9 @@
         function (object) {
           object.scale.set(0.04, 0.04, 0.04); // Scale the model
           object.position.set(-5.5, -3.5, -5); // Set the position of the model in front of the camera
+          const degreesToRotate = 20; 
+          const radiansToRotate = degreesToRotate * (Math.PI / 180); 
+          object.rotation.y = radiansToRotate;
           scene.add(object); // Add the model to the scene
 
           // Set up the animation mixer and play the first animation
@@ -166,6 +169,10 @@
           specificVoice = voices.find((voice) => voice.name === "Google UK English Female");
         } else if (navigator.userAgent.includes("Safari")) {
           specificVoice = voices.find((voice) => voice.name === "Samantha");
+        } else if (navigator.userAgent.includes("Edg")) {
+          specificVoice = voices.find((voice) => voice.name === "Microsoft Natasha Online (Natural) - English (Australia)");
+        } else if (navigator.userAgent.includes("Firefox")) {
+          specificVoice = voices.find((voice) => voice.name === "Microsoft Zira Desktop - English (United States)");
         } else {
           specificVoice = voices.find((voice) => voice.gender === "female");
         }

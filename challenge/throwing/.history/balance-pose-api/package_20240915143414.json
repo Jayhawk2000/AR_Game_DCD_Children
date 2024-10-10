@@ -1,0 +1,15 @@
+{
+  "name": "balance-pose-api",
+  "version": "1.0.0",
+  "description": "Balance Pose Detection API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@tensorflow/tfjs-node": "^3.18.0",
+    "@tensorflow-models/posenet": "^2.2.2",
+    "express": "^4.17.1",
+    "canvas": "^2.8.0"
+  }
+}

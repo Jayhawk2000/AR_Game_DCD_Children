@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Throwing Pose Detection</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script
+      src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="info">Click "Start" to begin</div>
+    <video id="video" style="display: none"></video>
+    <canvas id="output" style="display: none"></canvas>
+    <button id="startButton">Start</button>
+
+    <div id="resultPage" style="display: none">
+      <h1>Throwing Pose Results</h1>
+      <p>Total Score: <span id="totalScore"></span>/100</p>
+      <p>Throwing Score: <span id="throwingScore"></span>/100</p>
+      <p>Foot Step Score: <span id="footStepScore"></span>/100</p>
+      <h2>Feedback:</h2>
+      <p id="throwingFeedback"></p>
+      <button id="retryButton">Try Again</button>
+      <button id="returnButton">Return to Start</button>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

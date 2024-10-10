@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Balance Pose Results</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="resultInfo">Loading...</div>
+    <button id="retryButton">Retry</button>
+    <button id="startButton">Return to Start</button>
+
+    <script>
+      window.addEventListener("load", () => {
+        const totalScore = sessionStorage.getItem("totalScore");
+        const resultInfo = document.getElementById("resultInfo");
+        resultInfo.textContent = `Your total score is: ${totalScore}/10`;
+
+        document.getElementById("retryButton").addEventListener("click", () => {
+          window.location.href = "index.html"; // Retry will load the main page again to start camera detection
+        });
+
+        document.getElementById("startButton").addEventListener("click", () => {
+          window.location.href = "start.html"; // Return to start page
+        });
+      });
+    </script>
+  </body>
+</html>

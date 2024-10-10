@@ -92,6 +92,9 @@
         function (object) {
           object.scale.set(0.04, 0.04, 0.04); // Scale the model
           object.position.set(-7, -4, -6); // Set the position of the model
+          const degreesToRotate = 20; 
+          const radiansToRotate = degreesToRotate * (Math.PI / 180); 
+          object.rotation.y = radiansToRotate;
           scene.add(object); // Add the model to the scene
 
           // Create an AnimationMixer and play the first animation
@@ -156,12 +159,16 @@
         utterance.volume = 1; // Set volume
         utterance.lang = "en"; // Set the language to English
 
-        // Choose a specific voice based on browser availability
+        // Choose a specific voice based on the browser being used
         let specificVoice = null;
         if (navigator.userAgent.includes("Chrome")) {
           specificVoice = voices.find((voice) => voice.name === "Google UK English Female");
         } else if (navigator.userAgent.includes("Safari")) {
           specificVoice = voices.find((voice) => voice.name === "Samantha");
+        } else if (navigator.userAgent.includes("Edg")) {
+          specificVoice = voices.find((voice) => voice.name === "Microsoft Natasha Online (Natural) - English (Australia)");
+        } else if (navigator.userAgent.includes("Firefox")) {
+          specificVoice = voices.find((voice) => voice.name === "Microsoft Zira Desktop - English (United States)");
         } else {
           specificVoice = voices.find((voice) => voice.gender === "female");
         }

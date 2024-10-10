@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Balance Pose Detector</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="info">Click "Start" to begin</div>
+    <div id="footInfo"></div>
+    <div id="armInfo"></div>
+    <div id="headInfo"></div>
+    <div id="trunkInfo"></div>
+    <button id="startButton">Start</button>
+    <video id="video" style="display: none"></video>
+    <canvas id="output"></canvas>
+
+    <div id="resultPage" style="display: none">
+      <h1>Balance Pose Results</h1>
+      <p>Total Score: <span id="totalScore"></span>/10</p>
+      <p>Arm Stability Score: <span id="armScore"></span>/10</p>
+      <p>Trunk Stability Score: <span id="trunkScore"></span>/10</p>
+      <h2>Feedback:</h2>
+      <p id="armFeedback"></p>
+      <p id="trunkFeedback"></p>
+      <button id="retryButton">Try Again</button>
+      <button id="returnButton">Return to Start</button>
+    </div>
+
+    <button id="backButton" class="back-button" style="display: none;">返回</button>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="app.js"></script>
+  </body>
+</html>
