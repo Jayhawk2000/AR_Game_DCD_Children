@@ -91,7 +91,7 @@ function checkKeepBalance(landmarks) {
       instructionText.textContent = `Great! Keep your balance for ${remainingTime} more seconds.`;
     } else {
       instructionText.textContent =
-        "Excellent! You've maintained balance for 10 seconds.";
+        "Excellent! You've maintained balance for 5 seconds.";
     }
   } else {
     balanceStartTime = 0;
