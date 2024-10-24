@@ -2,7 +2,7 @@ let video, canvas, ctx;
 let pose, camera;
 let isDetectionStarted = false;
 let balanceStartTime = 0;
-const BALANCE_DURATION = 10000; // 10 seconds
+const BALANCE_DURATION = 5000; // 10 seconds
 
 function initializeElements() {
   video = document.getElementById("video3");
