@@ -1,7 +1,5 @@
 const startButton = document.getElementById("startButton");
-const info = document.getElementById("info");
-const footInfo = document.getElementById("footInfo");
-const armInfo = document.getElementById("armInfo");
+const instructionText = document.getElementById("instruction-text");
 const video = document.getElementById("video");
 const canvasElement = document.getElementById("output");
 const canvasCtx = canvasElement.getContext("2d");
@@ -24,7 +22,7 @@ startButton.addEventListener("click", startProcess);
 
 function startProcess() {
   startButton.style.display = "none";
-  info.textContent = "Initializing camera...";
+  instructionText.textContent = "Initializing camera...";
 
   initCamera()
     .then(() => {
@@ -36,7 +34,7 @@ function startProcess() {
     })
     .catch((error) => {
       console.error("Initialization failed:", error);
-      info.textContent = "Failed to initialize camera or pose detection.";
+      instructionText.textContent = "Failed to initialize camera or pose detection.";
     });
 }
 
@@ -79,7 +77,7 @@ function initCamera() {
       })
       .catch((error) => {
         console.error("Error starting camera:", error);
-        info.textContent = "Error starting camera: " + error.message;
+        instructionText.textContent = "Error starting camera: " + error.message;
         reject(error);
       });
   });
@@ -87,19 +85,19 @@ function initCamera() {
 
 function startCountdown() {
   const startTime = Date.now();
-  const interval = 1000; // 1秒
+  const interval = 1000;
+  const instructionText = document.getElementById('instruction-text');
   
   function updateTimer() {
     const elapsedTime = Date.now() - startTime;
     const remainingSeconds = 5 - Math.floor(elapsedTime / 1000);
     
     if (remainingSeconds >= 0) {
-      info.textContent = `Get ready! ${remainingSeconds}`;
-      info.innerHTML += "<br>Please stand where your full body is visible";
+      instructionText.textContent = `Get ready: ${remainingSeconds}`;
       
       if (remainingSeconds === 0) {
         isDetectionStarted = true;
-        info.textContent = "Strike a balance pose";
+        instructionText.textContent = "Stand with your full body visible";
       } else {
         setTimeout(updateTimer, interval - (elapsedTime % interval));
       }
@@ -196,11 +194,9 @@ function checkBalancePose(landmarks) {
   const rightArmStatus = checkArmRaised(rightShoulder, rightElbow, rightWrist);
 
   const currentTime = Date.now();
+  const instructionText = document.getElementById('instruction-text');
 
-  if (
-    oneFootRaised &&
-    (leftArmStatus.status === "raised" || rightArmStatus.status === "raised")
-  ) {
+  if (oneFootRaised && (leftArmStatus.status === "raised" || rightArmStatus.status === "raised")) {
     if (!balancePoseDetected) {
       balancePoseDetected = true;
       balancePoseStartTime = currentTime;
@@ -212,13 +208,12 @@ function checkBalancePose(landmarks) {
         rightHip: { ...landmarks[24] },
       };
       maxDisplacement = 0;
-      footInfo.textContent = "Great! Keep your foot raised.";
-      armInfo.textContent = "Arm raised, maintain position!";
+      instructionText.textContent = "Great! Keep this position";
     } else {
       updateMaxDisplacement(landmarks);
 
       if (currentTime - balancePoseStartTime >= BALANCE_POSE_DURATION) {
-        armScore = Math.max(leftArmStatus.score, rightArmStatus.score) * 10; 
+        armScore = Math.max(leftArmStatus.score, rightArmStatus.score) * 10;
         trunkStabilityScore = calculateTrunkStability();
         const totalScore = (armScore + trunkStabilityScore) / 2;
         const resultData = {
@@ -227,31 +222,24 @@ function checkBalancePose(landmarks) {
           totalScore: totalScore,
           armFeedback: getArmFeedback(armScore),
           trunkFeedback: getTrunkFeedback(trunkStabilityScore),
-          maxDisplacement: maxDisplacement, // Add this line to include maxDisplacement in the result
+          maxDisplacement: maxDisplacement,
         };
         showResultPage(resultData);
-
       } else {
         const remainingTime = Math.ceil(
           (BALANCE_POSE_DURATION - (currentTime - balancePoseStartTime)) / 1000
         );
-        info.textContent = `Hold steady for ${remainingTime} more seconds!`;
+        instructionText.textContent = `Hold steady: ${remainingTime}s`;
       }
     }
   } else {
     balancePoseDetected = false;
-    initialPose = null;
-
-    resetPoseDetection(
-      oneFootRaised,
-      leftArmStatus.status === "raised" || rightArmStatus.status === "raised"
-    );
+    if (!oneFootRaised) {
+      instructionText.textContent = "Lift one foot off the ground";
+    } else {
+      instructionText.textContent = "Raise your arms above shoulders";
+    }
   }
-}
-
-function resetPoseDetection(oneFootRaised, armRaised) {
-  footInfo.textContent = oneFootRaised ? "" : "Raise one foot higher.";
-  armInfo.textContent = armRaised ? "" : "Raise at least one arm.";
 }
 
 function getArmFeedback(score) {
@@ -281,7 +269,7 @@ function showResultPage(resultData) {
   isResultShown = true;
   document.getElementById("backButton").style.display = "none";
 
-  info.style.display = "none";
+  instructionText.style.display = "none";
   video.style.display = "none";
   canvasElement.style.display = "none";
 
@@ -298,7 +286,7 @@ function showResultPage(resultData) {
   document.getElementById("trunkFeedback").textContent =
     resultData.trunkFeedback;
 
-  // 添加语音反馈
+
   playAudio(`Your score is ${resultData.totalScore.toFixed(1)}. Great job!`);
 
   const retryButton = document.getElementById("retryButton");
@@ -375,3 +363,4 @@ function playAudio(text) {
   utterance.lang = "en-US";
   speechSynthesis.speak(utterance);
 }
+
