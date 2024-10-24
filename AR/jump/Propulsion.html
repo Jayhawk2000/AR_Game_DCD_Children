@@ -16,12 +16,18 @@
 
     <!-- Canvas element for rendering 3D models -->
     <canvas id="three-canvas"></canvas>
+    <canvas id="output_canvas"></canvas>
 
-    <!-- Container to display speech text -->
+    <!-- Container to display the speech text -->
     <div id="speech-text" class="speech-text"></div>
     
-    <!-- Instruction text to prompt the user to click the sound button -->
-    <div id="instruction-text" class="instruction-text">Click the sound button to play the voice prompt</div>
+    <!-- Container to display the instruction text -->
+    <div id="instruction-text" class="instruction-text"></div>
+    
+    <!-- Textbox to prompt the user to click the speaker button -->
+    <div id="prompt-text" class="prompt-text">Click the sound button to play the voice prompt</div>
+    
+    <div id="loading-text" class="loading-text">Loading model... 0%</div>
     
     <!-- Container for camera and buttons -->
     <div id="cameraContainer">
@@ -61,6 +67,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+    <script src="propulsion.js"></script>
 
     <script type="module">
       // Import and start the camera feed from the camera.js module
@@ -96,6 +107,19 @@
           const radiansToRotate = degreesToRotate * (Math.PI / 180); 
           object.rotation.y = radiansToRotate;
           scene.add(object); // Add the model to the scene
+          
+          // Loading progress event listener
+          const loadingText = document.getElementById("loading-text");
+
+          loader.manager.onProgress = function (item, loaded, total) {
+            const percentLoaded = Math.round((loaded / total) * 100);
+            loadingText.textContent = `Loading model... ${percentLoaded}%`;
+          };
+
+          // Hide loading text when loading is complete
+          loader.manager.onLoad = function () {
+            loadingText.style.display = "none";
+          };
 
           // Create an AnimationMixer and play the first animation
           const mixer = new THREE.AnimationMixer(object);
@@ -145,13 +169,6 @@
       window.speechSynthesis.onvoiceschanged = initializeVoices;
 
       function speak(text, callback) {
-        // Get the speech text element
-        const speechTextElement = document.getElementById("speech-text");
-
-        // Set the text to be displayed during speech
-        speechTextElement.textContent = text;
-        speechTextElement.style.display = "block"; // Show the text box
-
         // Create a SpeechSynthesisUtterance object for speech synthesis
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.pitch = 1.2; // Set pitch
@@ -182,8 +199,6 @@
 
         // Handle speech end event
         utterance.onend = function () {
-          speechTextElement.textContent = ""; // Clear the text box when the speech ends
-          speechTextElement.style.display = "none"; // Hide the text box
           if (callback) callback(); // Execute callback if provided
         };
 
@@ -201,6 +216,19 @@
       ];
 
       let speechTimeouts = [];
+
+      // Bind the click event for the speaker button
+      const playSoundButton = document.getElementById("playSoundButton");
+      playSoundButton.addEventListener("click", () => {
+        // Cancel any ongoing speech playback
+        window.speechSynthesis.cancel();
+
+        // Hide the instruction text
+        document.getElementById("prompt-text").style.display = "none";
+
+        // Start playing the welcome speeches
+        playSpeeches();
+      });
 
       // Play the speech sequence
       function playSpeeches() {

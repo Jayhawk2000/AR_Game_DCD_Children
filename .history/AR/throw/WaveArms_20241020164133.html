@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Meta tags for character encoding and responsive design -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wave Arms</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Centered title for the page -->
+    <h1 class="center-title">Wave Arms</h1>
+
+    <!-- Video element to display the camera feed -->
+    <video id="video3" autoplay playsinline></video>
+
+    <!-- Canvas for rendering 3D models -->
+    <canvas id="three-canvas"></canvas>
+    <canvas id="output_canvas"></canvas>
+    <!-- Container for displaying speech prompts -->
+    <div id="speech-text" class="speech-text"></div>
+
+    <!-- Instruction text prompting users to play the voice prompt -->
+    <div id="instruction-text" class="instruction-text">Click the sound button to play the voice prompt</div>
+    
+    <div id="loading-text" class="loading-text">Loading model... 0%</div>
+
+    <!-- Container for buttons, including back, previous, next, and play sound buttons -->
+    <div id="cameraContainer">
+      <div class="button-container">
+        <!-- Back button for returning to the previous screen -->
+        <button class="button" id="backButton">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M10 19l-7-7 7-7v4h8v6h-8v4z" />
+          </svg>
+        </button>
+
+        <!-- Previous button for navigating to the previous step -->
+        <button class="button" id="previousButton">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M15 19l-7-7 7-7v14z" />
+          </svg>
+        </button>
+
+        <!-- Next button for navigating to the next step -->
+        <button class="button" id="nextButton">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M9 19l7-7-7-7v14z" />
+          </svg>
+        </button>
+
+        <!-- Play sound button for triggering the voice prompt -->
+        <button class="button" id="playSoundButton">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+              d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-.73-3.37-1.91-4.5l-1.42 1.42C14.2 9.98 14.5 10.96 14.5 12s-.3 2.02-.83 2.58l1.42 1.42c1.18-1.13 1.91-2.73 1.91-4.5zM18.5 12c0-3.04-1.23-5.79-3.22-7.78l-1.42 1.42C15.96 6.79 17 9.3 17 12s-1.04 5.21-2.64 6.36l1.42 1.42C17.27 17.79 18.5 15.04 18.5 12z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Importing Three.js and FBXLoader for handling 3D models and animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+    <script src="waveArms.js"></script>
+
+    <script type="module">
+      // Import and start the camera feed using startCamera function from camera.js
+      import { startCamera } from "./camera.js";
+      startCamera("video3");
+
+      // Initialize Three.js scene, camera, and renderer
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("three-canvas"), alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight); // Set the renderer size to fill the screen
+      camera.position.z = 5; // Set camera position to ensure visibility of the 3D model
+
+      // Add a directional light to the scene
+      const light = new THREE.DirectionalLight(0xffffff, 1.7); // Adjust light intensity
+      light.position.set(2, 2, 5); // Position the light
+      scene.add(light);
+
+      // Set animation start and end times
+      const startTime = 4.4; // Start at 4.4 seconds
+      const endTime = 5.8; // End at 5.8 seconds
+      let currentTime = startTime; // Initialize current time for the animation
+      const slowFactor = 0.5; // Slow down the animation by half-speed (0.5)
+
+      // Load the FBX model and handle animations
+      const loader = new THREE.FBXLoader();
+      loader.load(
+        "ThrowObject.fbx", // Load the FBX model file
+        function (object) {
+          object.scale.set(0.04, 0.04, 0.04); // Scale the 3D model to fit the screen
+          object.position.set(-5.5, -3.5, -5); // Set the position of the 3D model
+          const degreesToRotate = 20; 
+          const radiansToRotate = degreesToRotate * (Math.PI / 180); 
+          object.rotation.y = radiansToRotate;
+          scene.add(object); // Add the 3D model to the scene
+          
+          // Loading progress event listener
+          const loadingText = document.getElementById("loading-text");
+
+          loader.manager.onProgress = function (item, loaded, total) {
+            const percentLoaded = Math.round((loaded / total) * 100);
+            loadingText.textContent = `Loading model... ${percentLoaded}%`;
+          };
+
+          // Hide loading text when loading is complete
+          loader.manager.onLoad = function () {
+            loadingText.style.display = "none";
+          };
+
+          const mixer = new THREE.AnimationMixer(object); // Create an animation mixer for handling animations
+          if (object.animations.length > 0) {
+            const action = mixer.clipAction(object.animations[0]); // Play the first animation found
+            action.play();
+
+            // Animation loop to control timing and slow down the animation
+            function animate() {
+              requestAnimationFrame(animate); // Continue the animation loop
+
+              currentTime += 0.01 * slowFactor; // Update the animation time
+              mixer.setTime(currentTime); // Set the time for the animation mixer
+
+              // Reset the animation time to the start if it reaches the end
+              if (currentTime >= endTime) {
+                currentTime = startTime;
+              }
+
+              renderer.render(scene, camera); // Render the scene
+            }
+            animate(); // Start the animation loop
+          }
+        },
+        undefined,
+        function (error) {
+          console.error("Model loading failed:", error); // Log an error if the model fails to load
+        }
+      );
+
+      // Adjust the camera and renderer size when the window is resized
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight; // Update the camera aspect ratio
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight); // Update the renderer size
+      });
+
+      // Initialize speech synthesis (Web Speech API) for voice prompts
+      let voices = [];
+
+      // Load available voices for speech synthesis
+      function initializeVoices() {
+        voices = window.speechSynthesis.getVoices();
+      }
+
+      // Update the list of voices when available
+      window.speechSynthesis.onvoiceschanged = initializeVoices;
+
+      // Function to handle speech synthesis and display corresponding text
+      function speak(text, callback) {
+        const speechTextElement = document.getElementById("speech-text"); // Get the speech text element
+        speechTextElement.textContent = text; // Set the speech text
+        speechTextElement.style.display = "block"; // Show the text
+
+        const utterance = new SpeechSynthesisUtterance(text); // Create a new speech utterance
+        utterance.pitch = 1.2; // Set pitch
+        utterance.rate = 1; // Set rate of speech
+        utterance.volume = 1; // Set volume
+        utterance.lang = "en"; // Set language to English
+
+        // Choose a specific voice based on the browser being used
+        let specificVoice = null;
+        if (navigator.userAgent.includes("Chrome")) {
+          specificVoice = voices.find((voice) => voice.name === "Google UK English Female");
+        } else if (navigator.userAgent.includes("Safari")) {
+          specificVoice = voices.find((voice) => voice.name === "Samantha");
+        } else if (navigator.userAgent.includes("Edg")) {
+          specificVoice = voices.find((voice) => voice.name === "Microsoft Natasha Online (Natural) - English (Australia)");
+        } else if (navigator.userAgent.includes("Firefox")) {
+          specificVoice = voices.find((voice) => voice.name === "Microsoft Zira Desktop - English (United States)");
+        } else {
+          specificVoice = voices.find((voice) => voice.gender === "female");
+        }
+
+        if (specificVoice) {
+          utterance.voice = specificVoice; // Set the selected voice
+        } else {
+          console.warn("Specific voice not found, using default.");
+        }
+
+        // Clear the speech text once the speech is finished
+        utterance.onend = function () {
+          speechTextElement.textContent = ""; // Clear the text
+          speechTextElement.style.display = "none"; // Hide the text container
+          if (callback) callback(); // Execute the callback function after speech ends
+        };
+
+        window.speechSynthesis.speak(utterance); // Speak the text
+      }
+
+      // Voice prompts to be spoken on page load
+      let welcomeSpeech = [
+        "Hello, boys and girls, welcome to the wave arms of throw!",
+        "Stand far away so you can see your whole body on the screen!",
+        "Let's follow the character step by step! Ready?",
+        "Step 1: Step and throw as far as you can!",
+        "Step 2: Slowly unwind your body, like a spring!",
+        "Step 3: Complete the throw like a whip!"
+      ];
+
+      let speechTimeouts = [];
+      let loopInterval = null;
+
+      // Play the speech prompts when the sound button is clicked
+      const playSoundButton = document.getElementById("playSoundButton");
+      playSoundButton.addEventListener("click", () => {
+        window.speechSynthesis.cancel(); // Stop any current speech
+        document.getElementById("instruction-text").style.display = "none"; // Hide instruction text
+        playSpeeches(); // Play the speech prompts
+      });
+
+      // Function to play the speech prompts in sequence
+      function playSpeeches() {
+        clearSpeechTimeouts(); // Clear any existing speech timeouts
+        let index = 0;
+
+        function playNextSpeech() {
+          if (index < welcomeSpeech.length) {
+            speak(welcomeSpeech[index], () => {
+              index++;
+              if (index < welcomeSpeech.length) {
+                setTimeout(playNextSpeech, 2000); // Play the next speech after 2 seconds
+              }
+            });
+          }
+        }
+        playNextSpeech(); // Start playing the first speech prompt
+      }
+
+      // Clear any active speech timeouts
+      function clearSpeechTimeouts() {
+        speechTimeouts.forEach((timeout) => clearTimeout(timeout));
+      }
+
+      // Stop speech when the page is closed or navigated away
+      window.addEventListener("beforeunload", () => {
+        clearSpeechTimeouts();
+        window.speechSynthesis.cancel(); // Stop any ongoing speech
+      });
+
+      // Handle back button click to navigate to index.html
+      const backButton = document.getElementById("backButton");
+      backButton.addEventListener("click", () => {
+        window.location.href = "../../prac_throw.html"; // Redirect to index.html
+      });
+
+      // Handle previous button click to navigate to StepForward.html
+      const previousButton = document.getElementById("previousButton");
+      previousButton.addEventListener("click", () => {
+        window.location.href = "../../throw_step2.html"; // Redirect to StepForward.html
+      });
+
+      // Handle next button click to navigate to FullAction.html
+      const nextButton = document.getElementById("nextButton");
+      nextButton.addEventListener("click", () => {
+        window.location.href = "../../throw_full.html"; // Redirect to FullAction.html
+      });
+    </script>
+  </body>
+</html>

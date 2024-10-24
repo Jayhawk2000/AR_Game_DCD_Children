@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Full Action</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Centered title -->
+    <h1 class="center-title">Full Action</h1>
+
+    <!-- Video element to display the camera feed -->
+    <video id="video3" autoplay playsinline></video>
+
+    <!-- Canvas element to render the 3D model -->
+    <canvas id="three-canvas"></canvas>
+
+    <!-- Container to display the speech text -->
+    <div id="speech-text" class="speech-text"></div>
+    
+    <!-- Textbox to prompt the user to click the speaker button -->
+    <div id="instruction-text" class="instruction-text">Click the sound button to play the voice prompt</div>
+    
+    <div id="loading-text" class="loading-text">Loading model... 0%</div>
+
+    <!-- Importing Three.js and required scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+
+    <div id="cameraContainer">
+      <div class="button-container">
+        <!-- Back button -->
+        <button class="button" id="backButton">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M10 19l-7-7 7-7v4h8v6h-8v4z" />
+          </svg>
+        </button>
+
+        <!-- Previous step button -->
+        <button class="button" id="previousButton">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M15 19l-7-7 7-7v14z" />
+          </svg>
+        </button>
+        
+        <!-- Speaker button -->
+        <button class="button" id="playSoundButton">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+              d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-.73-3.37-1.91-4.5l-1.42 1.42C14.2 9.98 14.5 10.96 14.5 12s-.3 2.02-.83 2.58l1.42 1.42c1.18-1.13 1.91-2.73 1.91-4.5zM18.5 12c0-3.04-1.23-5.79-3.22-7.78l-1.42 1.42C15.96 6.79 17 9.3 17 12s-1.04 5.21-2.64 6.36l1.42 1.42C17.27 17.79 18.5 15.04 18.5 12z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Importing camera management script -->
+    <script type="module">
+      import { startCamera } from "./camera.js";
+
+      // Start the camera using the function from camera.js
+      startCamera("video3");
+
+      // Initialize Three.js
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("three-canvas"), alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      camera.position.z = 5;
+
+      // Add a light source
+      const light = new THREE.DirectionalLight(0xffffff, 1.8);
+      light.position.set(0, 1, 1).normalize();
+      scene.add(light);
+
+      // Animation slice start and end times
+      const startTime = 0; // Start time (in seconds)
+      const endTime = 1.12; // End time (in seconds)
+      let currentTime = startTime; // Current animation time
+      const slowFactor = 0.6; // Slow down factor (0.6 means 60% slower)
+
+      // Load FBX model and set the animation slice, loop, and slow down
+      const loader = new THREE.FBXLoader();
+      loader.load(
+        "CanCan.fbx",  // Replace with the correct path to your FBX file
+        function (object) {
+          object.scale.set(0.04, 0.04, 0.04); // Scale the model
+          object.position.set(-7, -4, -3.5); // Position the model in front of the camera
+          const degreesToRotate = 20; 
+          const radiansToRotate = degreesToRotate * (Math.PI / 180); 
+          object.rotation.y = radiansToRotate; 
+          scene.add(object);
+          
+          // Loading progress event listener
+          const loadingText = document.getElementById("loading-text");
+
+          loader.manager.onProgress = function (item, loaded, total) {
+            const percentLoaded = Math.round((loaded / total) * 100);
+            loadingText.textContent = `Loading model... ${percentLoaded}%`;
+          };
+
+          // Hide loading text when loading is complete
+          loader.manager.onLoad = function () {
+            loadingText.style.display = "none";
+          };
+
+          const mixer = new THREE.AnimationMixer(object);  // Create an animation mixer for the model
+          if (object.animations.length > 0) {
+            const action = mixer.clipAction(object.animations[0]); // Play the first animation
+            action.play();
+
+            // Animation loop
+            function animate() {
+              requestAnimationFrame(animate);
+
+              // Update the animation time, slowed down
+              currentTime += 0.01 * slowFactor;
+              mixer.setTime(currentTime);
+
+              // Reset to start time if the animation ends
+              if (currentTime >= endTime) {
+                currentTime = startTime;
+              }
+
+              renderer.render(scene, camera); // Render the scene
+            }
+            animate();
+          }
+        },
+        undefined,
+        function (error) {
+          console.error("Model loading failed:", error); // Error handling for model loading
+        }
+      );
+
+      // Adjust the window size
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      // Initialize Speech Synthesis (Web Speech API)
+      let voices = [];
+
+      function initializeVoices() {
+        voices = window.speechSynthesis.getVoices();
+      }
+
+      // Update the voice list when it changes
+      window.speechSynthesis.onvoiceschanged = initializeVoices;
+
+      function speak(text, callback) {
+        // Get the speech text container
+        const speechTextElement = document.getElementById("speech-text");
+
+        // Set the displayed text corresponding to the speech
+        speechTextElement.textContent = text;
+        speechTextElement.style.display = "block"; // Show the text box
+
+        // Create a SpeechSynthesisUtterance object
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.pitch = 1.2; // Set pitch
+        utterance.rate = 1; // Set speech rate
+        utterance.volume = 1; // Set volume
+        utterance.lang = "en"; // Set language to English
+
+        // Choose a specific voice based on the browser being used
+        let specificVoice = null;
+        if (navigator.userAgent.includes("Chrome")) {
+          specificVoice = voices.find((voice) => voice.name === "Google UK English Female");
+        } else if (navigator.userAgent.includes("Safari")) {
+          specificVoice = voices.find((voice) => voice.name === "Samantha");
+        } else if (navigator.userAgent.includes("Edg")) {
+          specificVoice = voices.find((voice) => voice.name === "Microsoft Natasha Online (Natural) - English (Australia)");
+        } else if (navigator.userAgent.includes("Firefox")) {
+          specificVoice = voices.find((voice) => voice.name === "Microsoft Zira Desktop - English (United States)");
+        } else {
+          specificVoice = voices.find((voice) => voice.gender === "female");
+        }
+
+        // Set the chosen voice
+        if (specificVoice) {
+          utterance.voice = specificVoice;
+        } else {
+          console.warn("Specific voice not found, using default.");
+        }
+
+        // Clear the text box and run callback after speech ends
+        utterance.onend = function () {
+          speechTextElement.textContent = ""; // Clear the text box
+          speechTextElement.style.display = "none"; // Hide the text box
+          if (callback) callback(); // Run callback if provided
+        };
+
+        // Play the speech
+        window.speechSynthesis.speak(utterance);
+      }
+
+      // Predefined welcome speech for the page load
+      let welcomeSpeech = [
+        "Hello, boys and girls, welcome to the full action of balance!",
+        "Stand far away so you can see your whole body on the screen!",
+        "Let's follow the character step by step! Ready?",
+        "Step 1: Raise your arms slowly like airplane wings!",
+        "Step 2: Look ahead, eyes on something in front of you!",
+        "Step 3: Lift one of your feet up, nice and slow!",
+        "Step 4: Keep your balance, hold for 5 seconds! You’re doing great!"
+      ];
+
+      let speechTimeouts = [];
+      let loopInterval = null;
+
+      // Bind speaker button click event
+      const playSoundButton = document.getElementById("playSoundButton");
+      playSoundButton.addEventListener("click", () => {
+        // Cancel any ongoing speech playback
+        window.speechSynthesis.cancel();
+
+        // Hide the instruction text
+        document.getElementById("instruction-text").style.display = "none";
+
+        // Start playing the welcome speeches from the beginning
+        playSpeeches();
+      });
+
+      function playSpeeches() {
+        clearSpeechTimeouts();
+
+        let index = 0;
+        function playNextSpeech() {
+          if (index < welcomeSpeech.length) {
+            speak(welcomeSpeech[index], () => {
+              index++;
+              if (index < welcomeSpeech.length) {
+                setTimeout(playNextSpeech, 2000); // Wait for 2 seconds before the next speech
+              }
+            });
+          }
+        }
+        playNextSpeech();
+      }
+
+      function clearSpeechTimeouts() {
+        speechTimeouts.forEach((timeout) => clearTimeout(timeout));
+      }
+
+      // Stop speech when leaving or closing the page
+      window.addEventListener("beforeunload", () => {
+        clearSpeechTimeouts();
+        window.speechSynthesis.cancel();
+      });
+
+      // Navigate to index.html when the back button is clicked
+      const backButton = document.getElementById("backButton");
+      backButton.addEventListener("click", () => {
+        window.location.href = "../../prac_bal.html"; // Redirect to index.html
+      });
+
+      // Navigate to LiftOneFoot.html when the previous button is clicked
+      const previousButton = document.getElementById("previousButton");
+      previousButton.addEventListener("click", () => {
+        window.location.href = "../../bal_step3.html"; // Redirect to LiftOneFoot.html
+      });
+    </script>
+    <script src="fullAction.js"></script>
+  </body>
+</html>

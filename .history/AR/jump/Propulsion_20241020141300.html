@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Define the character encoding and set up the viewport for responsive design -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Propulsion</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Centered title for the page -->
+    <h1 class="center-title">Propulsion</h1>
+    
+    <!-- Video element to display the camera feed -->
+    <video id="video3" style="display: none;"></video>
+
+    <!-- Canvas element for rendering 3D models -->
+    <canvas id="output_canvas"></canvas>
+
+    <!-- Container to display speech text -->
+    <div id="speech-text" class="speech-text"></div>
+    
+    <!-- Instruction text to prompt the user to click the sound button -->
+    <div id="instruction-text" class="instruction-text">Click the sound button to play the voice prompt</div>
+    
+    <div id="loading-text" class="loading-text">Loading model... 0%</div>
+    
+    <!-- Container for camera and buttons -->
+    <div id="cameraContainer">
+      <div class="button-container">
+        <!-- Back button to return to the previous screen -->
+        <button class="button" id="backButton">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M10 19l-7-7 7-7v4h8v6h-8v4z" />
+          </svg>
+        </button>
+
+        <!-- Previous button to navigate to the previous page -->
+        <button class="button" id="previousButton">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M15 19l-7-7 7-7v14z" />
+          </svg>
+        </button>
+
+        <!-- Next button to navigate to the next page -->
+        <button class="button" id="nextButton">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M9 19l7-7-7-7v14z" />
+          </svg>
+        </button>
+        
+        <!-- Button to play the voice prompt -->
+        <button class="button" id="playSoundButton">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+              d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-.73-3.37-1.91-4.5l-1.42 1.42C14.2 9.98 14.5 10.96 14.5 12s-.3 2.02-.83 2.58l1.42 1.42c1.18-1.13 1.91-2.73 1.91-4.5zM18.5 12c0-3.04-1.23-5.79-3.22-7.78l-1.42 1.42C15.96 6.79 17 9.3 17 12s-1.04 5.21-2.64 6.36l1.42 1.42C17.27 17.79 18.5 15.04 18.5 12z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Include necessary libraries for Three.js and FBXLoader -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+    <script src="propulsion.js"></script>
+
+    <script type="module">
+      // Import and start the camera feed from the camera.js module
+      import { startCamera } from "./camera.js";
+      startCamera("video3");
+
+      // Set up the scene, camera, and renderer for Three.js
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("output_canvas"), alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight); // Adjust the renderer size to fit the window
+      camera.position.z = 5; // Set the camera's position
+
+      // Add a directional light to the scene
+      const light = new THREE.DirectionalLight(0xffffff, 2);
+      light.position.set(2, 2, 5); // Position the light
+      scene.add(light);
+
+      // Define the start and end times for the animation cut
+      const startTime = 1.6; 
+      const endTime = 2.4; 
+      let currentTime = startTime; // Initialize the current animation time
+      const slowFactor = 0.5; // Slow down factor (0.5 means half speed)
+
+      // Load the FBX model and set up animation slicing and looping
+      const loader = new THREE.FBXLoader();
+      loader.load(
+        "ForwardJump.fbx",  // Path to the FBX file
+        function (object) {
+          object.scale.set(0.04, 0.04, 0.04); // Scale the model
+          object.position.set(-7, -4, -6); // Set the position of the model
+          const degreesToRotate = 20; 
+          const radiansToRotate = degreesToRotate * (Math.PI / 180); 
+          object.rotation.y = radiansToRotate;
+          scene.add(object); // Add the model to the scene
+          
+          // Loading progress event listener
+          const loadingText = document.getElementById("loading-text");
+
+          loader.manager.onProgress = function (item, loaded, total) {
+            const percentLoaded = Math.round((loaded / total) * 100);
+            loadingText.textContent = `Loading model... ${percentLoaded}%`;
+          };
+
+          // Hide loading text when loading is complete
+          loader.manager.onLoad = function () {
+            loadingText.style.display = "none";
+          };
+
+          // Create an AnimationMixer and play the first animation
+          const mixer = new THREE.AnimationMixer(object);
+          if (object.animations.length > 0) {
+            const action = mixer.clipAction(object.animations[0]);
+            action.play();
+
+            // Animation loop to update time and render the scene
+            function animate() {
+              requestAnimationFrame(animate);
+
+              // Update the animation time, applying the slow factor
+              currentTime += 0.01 * slowFactor;
+              mixer.setTime(currentTime);
+
+              // Reset the time to the start if the end is reached
+              if (currentTime >= endTime) {
+                currentTime = startTime;
+              }
+
+              renderer.render(scene, camera); // Render the scene
+            }
+            animate(); // Start the animation loop
+          }
+        },
+        undefined,
+        function (error) {
+          console.error("Model loading failed:", error); // Log an error if the model fails to load
+        }
+      );
+
+      // Adjust the camera and renderer size when the window is resized
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      // Initialize speech synthesis (Web Speech API)
+      let voices = [];
+
+      function initializeVoices() {
+        voices = window.speechSynthesis.getVoices(); // Get the available voices
+      }
+
+      // Update the voice list when available
+      window.speechSynthesis.onvoiceschanged = initializeVoices;
+
+      function speak(text, callback) {
+        // Get the speech text element
+        const speechTextElement = document.getElementById("speech-text");
+
+        // Set the text to be displayed during speech
+        speechTextElement.textContent = text;
+        speechTextElement.style.display = "block"; // Show the text box
+
+        // Create a SpeechSynthesisUtterance object for speech synthesis
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.pitch = 1.2; // Set pitch
+        utterance.rate = 1; // Set rate
+        utterance.volume = 1; // Set volume
+        utterance.lang = "en"; // Set the language to English
+
+        // Choose a specific voice based on the browser being used
+        let specificVoice = null;
+        if (navigator.userAgent.includes("Chrome")) {
+          specificVoice = voices.find((voice) => voice.name === "Google UK English Female");
+        } else if (navigator.userAgent.includes("Safari")) {
+          specificVoice = voices.find((voice) => voice.name === "Samantha");
+        } else if (navigator.userAgent.includes("Edg")) {
+          specificVoice = voices.find((voice) => voice.name === "Microsoft Natasha Online (Natural) - English (Australia)");
+        } else if (navigator.userAgent.includes("Firefox")) {
+          specificVoice = voices.find((voice) => voice.name === "Microsoft Zira Desktop - English (United States)");
+        } else {
+          specificVoice = voices.find((voice) => voice.gender === "female");
+        }
+
+        // If a specific voice is available, set it
+        if (specificVoice) {
+          utterance.voice = specificVoice;
+        } else {
+          console.warn("Specific voice not found, using default.");
+        }
+
+        // Handle speech end event
+        utterance.onend = function () {
+          speechTextElement.textContent = ""; // Clear the text box when the speech ends
+          speechTextElement.style.display = "none"; // Hide the text box
+          if (callback) callback(); // Execute callback if provided
+        };
+
+        // Play the speech
+        window.speechSynthesis.speak(utterance);
+      }
+
+      // Predefined welcome speech for page load
+      let welcomeSpeech = [
+        "Hello, boys and girls, welcome to the propulsion of jump!",
+        "Stand far away so you can see your whole body on the screen!",
+        "Let's follow the character step by step! Ready?",
+        "Step 1: Head up, eyes forward! We’re going to jump far!",
+        "Step 2: Straighten your legs and stretch your arms!",
+      ];
+
+      let speechTimeouts = [];
+
+      // Play the speech sequence
+      function playSpeeches() {
+        clearSpeechTimeouts();
+
+        let index = 0;
+        function playNextSpeech() {
+          if (index < welcomeSpeech.length) {
+            speak(welcomeSpeech[index], () => {
+              index++;
+              if (index < welcomeSpeech.length) {
+                setTimeout(playNextSpeech, 2000); // Wait 2 seconds before playing the next speech
+              }
+            });
+          }
+        }
+        playNextSpeech();
+      }
+
+      // Clear any active speech timeouts
+      function clearSpeechTimeouts() {
+        speechTimeouts.forEach((timeout) => clearTimeout(timeout));
+      }
+
+      // Stop speech when the page is closed or navigated away
+      window.addEventListener("beforeunload", () => {
+        clearSpeechTimeouts();
+        window.speechSynthesis.cancel(); // Stop any ongoing speech
+      });
+
+      // Handle back button click to navigate to index.html
+      const backButton = document.getElementById("backButton");
+      backButton.addEventListener("click", () => {
+        window.location.href = "../../prac_jump.html"; // Redirect to index.html
+      });
+
+      // Handle previous button click to navigate to Preparation.html
+      const previousButton = document.getElementById("previousButton");
+      previousButton.addEventListener("click", () => {
+        window.location.href = "../../jump_step1.html"; // Redirect to Preparation.html
+      });
+
+      // Handle next button click to navigate to Landing.html
+      const nextButton = document.getElementById("nextButton");
+      nextButton.addEventListener("click", () => {
+        window.location.href = "../../jump_step3.html"; // Redirect to Landing.html
+      });
+    </script>
+  </body>
+</html>

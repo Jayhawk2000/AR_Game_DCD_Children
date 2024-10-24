@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homepage</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .background {
+        background-image: url('img/homepage.png');
+        background-size: 100vw 100vh; 
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-attachment: fixed;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .content {
+        width: 90vw; /* 增加内容区域宽度 */
+        height: 100%;
+        background-color: white;
+        display: flex;
+        flex-direction: column;
+        padding: 5vh;
+    }
+
+    .section {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .card-slider {
+        overflow-x: auto;
+        padding-bottom: 20px;
+    }
+
+    /* 美化滚动条 */
+    .card-slider::-webkit-scrollbar {
+        height: 8px;
+    }
+    .card-slider::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+    .card-slider::-webkit-scrollbar-thumb {
+        background: #FFB000;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+    .card-slider::-webkit-scrollbar-thumb:hover {
+        background: #e09e00;
+    }
+
+    .card {
+        width: 550px; /* 增加卡片宽度 */
+        height: 300px; /* 保持卡片高度不变 */
+    }
+</style>
+</head>
+<body>
+
+<div class="background">
+    <div class="content">
+        <div class="section">
+            <br><br><br>
+            <h2 class="text-4xl font-bold text-gray-800 mb-8 relative pl-6 inline-block">
+                <span class="relative z-10">Practice</span>
+                <span class="absolute left-0 bottom-0 w-full h-3 bg-yellow-400 transform -skew-x-12"></span>
+            </h2>
+            <div class="card-slider snap-x snap-mandatory flex space-x-8 p-4"> <!-- 增加卡片间距 -->
+                <a href="prac_bal.html" class="card flex-none bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 relative overflow-hidden group border border-white border-opacity-20">
+                    <div class="absolute inset-0 bg-black opacity-40"></div>
+                    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('img/balance_practice.png');"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                        <h3 class="text-white text-3xl font-bold mb-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">Balance Practice</h3>
+                        <p class="text-white text-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">Improve your balance skills</p>
+                    </div>
+                </a>
+                <!-- 重复类似的结构为其他两个Practice卡片 -->
+            </div>
+        </div>
+        <div class="section">
+            <br><br><br>
+            <h2 class="text-4xl font-bold text-gray-800 mb-8 relative pl-6 inline-block">
+                <span class="relative z-10">Challenge</span>
+                <span class="absolute left-0 bottom-0 w-full h-3 bg-yellow-400 transform -skew-x-12"></span>
+            </h2>
+            <div class="card-slider snap-x snap-mandatory flex space-x-8 p-4"> <!-- 增加卡片间距 -->
+                <a href="cha_bal.html" class="card flex-none bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-500 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 relative overflow-hidden group border border-white border-opacity-20">
+                    <div class="absolute inset-0 bg-black opacity-40"></div>
+                    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('img/balance_challenge.png');"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                        <h3 class="text-white text-3xl font-bold mb-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">Balance Challenge</h3>
+                        <p class="text-white text-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">Test your balance skills</p>
+                    </div>
+                </a>
+                <!-- 重复类似的结构为其他两个Challenge卡片 -->
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

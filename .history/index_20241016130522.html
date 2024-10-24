@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Landing page</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<style>
+    body, html {
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        overflow-x: hidden; /* 防止用户自己滚动 */
+        overflow-y: hidden; /* 防止垂直滚动 */
+    }
+
+    .backgrounds {
+        display: flex;
+        flex-direction: row;
+        min-width: 200vw; /* 保证有足够的宽度容纳两个背景 */
+    }
+
+    .background {
+        width: 100vw; /* 每个背景占满整个视口宽度 */
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-attachment: fixed;
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .content {
+        width: 90vw; /* 宽度使用视口宽度百分比 */
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 5vw; /* 使用视口宽度单位 */
+        padding-top: 5vw; /* 顶部填充 */
+    }
+
+    .left-section {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1vw;
+        }
+
+    .right-section {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+    .text {
+        padding-top: 5vw; /* 顶部填充 */
+        padding-right: 0.1vw; /* 右侧填充 */
+    }
+
+    .welcome {
+        font-size: 4vw; /* 字体大小 */
+        font-weight: bold;
+        color: black;
+        margin-bottom: 2vw; /* 底部边距 */
+    }
+
+    .description1 {
+        font-size: 2vw; /* 字体大小 */
+        color: #333;
+        line-height: 1.5; /* 行高 */
+    }
+
+    .description2 {
+        font-size: 2vw; /* 字体大小 */
+        color: #333;
+        line-height: 1.5; /* 行高 */
+        line-height: 1.5; /* 行高 */
+    }
+
+    .image img {
+        width: 100%; /* 宽度100% */
+        height: auto; /* 高度自动 */
+    }
+
+    .footer {
+        width: 100%;
+        display: flex;
+        justify-content: center; /* 水平居中 */
+        align-items: flex-end; /* 垂直底部对齐 */
+        position: absolute;
+        bottom: 4vw; /* 距底部的距离 */
+    }
+
+    .next-button {
+        padding: 1vw 4vw; /* 按钮内边距 */
+        font-size: 2vw; /* 字体大小 */
+        background-color: #febb2a;
+        color: white;
+        border: none;
+        border-radius: 1.5vw; /* 边框圆角 */
+        cursor: pointer;
+        transition: box-shadow 0.3s;
+        margin-bottom: 1vw;
+    }
+
+    .next-button:hover {
+        box-shadow: 0 0.8vw 1.6vw 0 rgba(0,0,0,0.2);
+    }
+
+    .arrow {
+        position: absolute;
+        top: 50%; /* 垂直居中 */
+        font-size: 4vw;
+        color: rgb(160, 171, 171);
+        border: none;
+        background: none;
+        cursor: pointer;
+        transition: opacity 0.3s ease;
+    }
+
+    .arrow:hover {
+        box-shadow: 0 0.8vw 1.6vw 0 rgba(0,0,0,0.2);
+    }
+
+    .right-arrow {
+        right: 1vw; /* 右侧位置 */
+    }
+
+    .left-arrow {
+        left: 1vw; /* 左侧位置 */
+    }
+
+</style>
+</head>
+<body class="h-screen m-0 p-0 font-sans overflow-hidden">
+    <div class="flex flex-row min-w-[200vw]">
+        <div class="w-screen min-h-screen flex items-center justify-center bg-no-repeat bg-cover bg-fixed relative flex-shrink-0">
+            <div class="w-[90vw] flex items-center justify-between p-[5vw] pt-[5vw]">
+                <div class="w-[45%] flex flex-col items-center p-[1vw]">
+                    <!-- 左侧内容 -->
+                </div>
+                <div class="flex-1 p-5 flex flex-col">
+                    <div class="pt-[5vw] pr-[0.1vw]">
+                        <h1 class="text-[4vw] font-bold text-black mb-[2vw]">Welcome</h1>
+                        <p class="text-[2vw] text-gray-700 leading-normal">Description 1</p>
+                        <p class="text-[2vw] text-gray-700 leading-normal">Description 2</p>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full flex justify-center items-end absolute bottom-[4vw]">
+                <button class="px-[4vw] py-[1vw] text-[2vw] bg-yellow-400 text-white border-none rounded-[1.5vw] cursor-pointer transition-shadow hover:shadow-lg mb-[1vw]">
+                    Next
+                </button>
+            </div>
+        </div>
+        <!-- 第二个背景可以类似地修改 -->
+    </div>
+    <button class="absolute top-1/2 right-[1vw] text-[4vw] text-gray-400 border-none bg-transparent cursor-pointer transition-opacity hover:shadow-lg">
+        &#10095;
+    </button>
+    <button class="absolute top-1/2 left-[1vw] text-[4vw] text-gray-400 border-none bg-transparent cursor-pointer transition-opacity hover:shadow-lg">
+        &#10094;
+    </button>
+</body>
+</html>

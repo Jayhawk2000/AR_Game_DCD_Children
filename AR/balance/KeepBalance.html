@@ -11,17 +11,24 @@
     <h1 class="center-title">Keep Balance</h1>
 
     <!-- Video element to display the camera feed -->
-    <video id="video2" autoplay playsinline></video>
+    <video id="video3" autoplay playsinline></video>
 
     <!-- Canvas element to render the 3D model -->
     <canvas id="three-canvas"></canvas>
 
-    <!-- Container to display the speech text -->
+    <!-- Container to display the speech text (currently hidden) -->
     <div id="speech-text" class="speech-text"></div>
     
+    <!-- Container to display the instruction text -->
+    <div id="instruction-text" class="instruction-text"></div>
+    
     <!-- Textbox to prompt the user to click the speaker button -->
-    <div id="instruction-text" class="instruction-text">Click the sound button to play the voice prompt</div>
+    <div id="prompt-text" class="prompt-text">Click the sound button to play the voice prompt</div>
+    
+    <!-- Loading text for displaying model loading progress -->
+    <div id="loading-text" class="loading-text">Loading model... 0%</div>
 
+    <!-- Container for the buttons: Back, Previous, Next, and Speaker -->
     <div id="cameraContainer">
       <div class="button-container">
         <!-- Back button -->
@@ -45,7 +52,7 @@
           </svg>
         </button>
         
-        <!-- Speaker button -->
+        <!-- Speaker button (used to play the speech prompt) -->
         <button class="button" id="playSoundButton">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path
@@ -55,57 +62,87 @@
       </div>
     </div>
 
-    <!-- Importing necessary scripts -->
+    <!-- Importing necessary scripts (Three.js, model loader, etc.) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+    <script src="keepBalance.js"></script>
 
     <script type="module">
       // Import the camera management script
       import { startCamera } from "./camera.js";
-      // Start the camera feed using the video2 element
-      startCamera("video2");
+      // Start the camera feed using the video3 element
+      startCamera("video3");
 
       // Three.js setup
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
       const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("three-canvas"), alpha: true });
-      renderer.setSize(window.innerWidth, window.innerHeight); // Set renderer size
-      camera.position.z = 5; // Set camera position
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.position.z = 5;
 
-      // Adding a directional light source
+      // Add a light to the scene
       const light = new THREE.DirectionalLight(0xffffff, 1.8);
-      light.position.set(0, 1, 1).normalize(); // Position the light
+      light.position.set(0, 1, 1).normalize();
       scene.add(light);
 
-      // Load the FBX model
+      // Load FBX model
       const loader = new THREE.FBXLoader();
       loader.load("CanCan.fbx", function (object) {
-        object.scale.set(0.04, 0.04, 0.04); // Scale the model
-        object.position.set(-7, -4, -3.5); // Position the model
+        // Scale and position the model
+        object.scale.set(0.04, 0.04, 0.04);
+        object.position.set(-7, -4, -3.5);
         const degreesToRotate = 20; 
         const radiansToRotate = degreesToRotate * (Math.PI / 180); 
         object.rotation.y = radiansToRotate; 
-        scene.add(object); // Add model to the scene
+        scene.add(object);
+        
+        // Update loading progress in the loading text
+        const loadingText = document.getElementById("loading-text");
 
-        // Initialize the animation mixer for the model
+        loader.manager.onProgress = function (item, loaded, total) {
+          const percentLoaded = Math.round((loaded / total) * 100);
+          loadingText.textContent = `Loading model... ${percentLoaded}%`;
+        };
+
+        // Hide the loading text once model is loaded
+        loader.manager.onLoad = function () {
+          loadingText.style.display = "none";
+        };
+
+        // Create an animation mixer and play the animation
         const mixer = new THREE.AnimationMixer(object);
-        if (object.animations.length > 0) {
-          const action = mixer.clipAction(object.animations[0]);
-          action.play();
-          mixer.setTime(1.12); // Pause the animation at the first frame
-          action.paused = true; // Pause the animation
-        }
+        const action = mixer.clipAction(object.animations[0]);
+        action.play();
 
-        // Animation loop to continuously render the scene
+        // Animation and rendering loop with pause functionality
+        let pauseTime = 1.1;  // Set to pause at 1.1 seconds
+        let paused = false;   // This parameter is used to determine whether it has been paused
+
         function animate() {
           requestAnimationFrame(animate);
-          renderer.render(scene, camera); // Render the scene
+
+          // Check that the pause time has been reached and pause the animation
+          if (!paused && mixer.time >= pauseTime) {
+            mixer.setTime(pauseTime);  // Freeze animation at pause time
+            paused = true;  
+          }
+
+          // Update the animation without pausing
+          if (!paused) {
+            mixer.update(0.01); // Continue updating animation if not paused
+          }
+
+          renderer.render(scene, camera); // Render the scene with updated animation
         }
         animate(); // Start the animation loop
       });
-
-      // Handle window resizing
+      
+      // Handle window resizing to adjust camera aspect ratio and renderer size
       window.addEventListener("resize", () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
@@ -115,27 +152,21 @@
       // Speech synthesis setup (Web Speech API)
       let voices = [];
 
+      // Initialize available voices for speech synthesis
       function initializeVoices() {
-        voices = window.speechSynthesis.getVoices(); // Get available voices
+        voices = window.speechSynthesis.getVoices();
       }
 
-      // Update voice list when available
+      // Update the voice list when available
       window.speechSynthesis.onvoiceschanged = initializeVoices;
 
+      // Function to play a specific speech using speech synthesis
       function speak(text, callback) {
-        // Get the speech text container
-        const speechTextElement = document.getElementById("speech-text");
-
-        // Set the text to be displayed during speech
-        speechTextElement.textContent = text;
-        speechTextElement.style.display = "block"; // Show the text box
-
-        // Create a SpeechSynthesisUtterance object for speech synthesis
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.pitch = 1.2; // Set pitch
-        utterance.rate = 1; // Set speech rate
-        utterance.volume = 1; // Set volume
-        utterance.lang = "en"; // Set language to English
+        utterance.pitch = 1.2; // Set speech pitch
+        utterance.rate = 1;    // Set speech rate
+        utterance.volume = 1;  // Set speech volume
+        utterance.lang = "en"; // Set speech language to English
 
         // Choose a specific voice based on the browser being used
         let specificVoice = null;
@@ -151,48 +182,45 @@
           specificVoice = voices.find((voice) => voice.gender === "female");
         }
 
-        // Set the chosen voice if available
+        // Set the selected voice
         if (specificVoice) {
           utterance.voice = specificVoice;
         } else {
           console.warn("Specific voice not found, using default.");
         }
 
-        // Clear the text box and call callback after speech ends
+        // Run callback function after speech ends
         utterance.onend = function () {
-          speechTextElement.textContent = ""; // Clear the text box
-          speechTextElement.style.display = "none"; // Hide the text box
-          if (callback) callback(); // Run the callback if provided
+          if (callback) callback();
         };
 
         // Play the speech
         window.speechSynthesis.speak(utterance);
       }
 
-      // Welcome speech array for page load
+      // Predefined welcome speech array
       let welcomeSpeech = [
         "Hello, boys and girls, welcome to keep balance of balance!",
         "Stand far away so you can see your whole body on the screen!",
         "Let's follow the character! Ready?",
-        "Keep your balance, hold for 5 seconds! You’re doing great!"
+        "Keep your balance, hold for 5 seconds! You're doing great!"
       ];
 
+      // Store speech timeout references
       let speechTimeouts = [];
-      let loopInterval = null;
 
-      // Bind the click event for the speaker button
+      // Event listener for the speaker button click
       const playSoundButton = document.getElementById("playSoundButton");
       playSoundButton.addEventListener("click", () => {
-        // Cancel any ongoing speech synthesis
+        // Cancel any ongoing speech playback
         window.speechSynthesis.cancel();
-
-        // Hide the instruction text
-        document.getElementById("instruction-text").style.display = "none";
-
-        // Start playing the welcome speeches
+        // Hide the prompt text after the button is clicked
+        document.getElementById("prompt-text").style.display = "none";
+        // Play the predefined speeches
         playSpeeches();
       });
 
+      // Function to play all the speeches sequentially
       function playSpeeches() {
         clearSpeechTimeouts();
 
@@ -202,7 +230,7 @@
             speak(welcomeSpeech[index], () => {
               index++;
               if (index < welcomeSpeech.length) {
-                setTimeout(playNextSpeech, 2000); // Play the next speech after 2 seconds
+                setTimeout(playNextSpeech, 2000); // 2 second delay before next speech
               }
             });
           }
@@ -210,32 +238,33 @@
         playNextSpeech();
       }
 
+      // Clear speech timeouts if there are any
       function clearSpeechTimeouts() {
-        speechTimeouts.forEach((timeout) => clearTimeout(timeout)); // Clear speech timeouts
+        speechTimeouts.forEach((timeout) => clearTimeout(timeout));
       }
 
-      // Stop the speech when the page is closed or navigated away
+      // Stop speech synthesis when leaving the page
       window.addEventListener("beforeunload", () => {
         clearSpeechTimeouts();
         window.speechSynthesis.cancel();
       });
 
-      // Handle back button click
+      // Back button functionality 
       const backButton = document.getElementById("backButton");
       backButton.addEventListener("click", () => {
-        window.location.href = "../../prac_bal.html"; // Redirect to index.html
+        window.location.href = "../../prac_bal.html";
       });
 
-      // Handle previous step button click
+      // Previous step button functionality
       const previousButton = document.getElementById("previousButton");
       previousButton.addEventListener("click", () => {
-        window.location.href = "../../bal_step2.html"; // Redirect to LiftOneFoot.html
+        window.location.href = "../../bal_step2.html";
       });
 
-      // Handle next step button click
+      // Next step button functionality
       const nextButton = document.getElementById("nextButton");
       nextButton.addEventListener("click", () => {
-        window.location.href = "../../bal_full.html"; // Redirect to FullAction.html
+        window.location.href = "../../bal_full.html";
       });
     </script>
   </body>

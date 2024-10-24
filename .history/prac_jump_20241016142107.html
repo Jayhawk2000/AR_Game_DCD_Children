@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jump Practice</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('img/jump.png'); 
+            background-size: cover;
+            background-position: center;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            width: 80vw;
+            height: 80vh;
+            border-radius: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .return-button {
+            position: absolute;
+            top: 2vh;
+            left: 2vw;
+            width: 3vw;
+            height: 3vw;
+            background: url('img/returnicon.png') no-repeat center center;
+            background-size: contain;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .return-button:hover {
+            transform: scale(1.1);
+        }
+
+        .left-section {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2vw;
+            background-color: rgba(248, 213, 104, 0.2);
+        }
+
+        .illustration img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .illustration img:hover {
+            transform: scale(1.05);
+        }
+
+        .thumbnails {
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            margin-top: 2vh;
+        }
+
+        .thumbnail {
+            width: 5vw;
+            height: auto;
+            margin: 0 0.5vw;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .thumbnail:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .staticarrow {
+            width: 3vw;
+            height: auto;
+            margin: 0 0.5vw;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .staticarrow:hover {
+            transform: scale(1.1);
+        }
+
+        .right-section {
+            flex: 1;
+            padding: 3vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding-top: 5vh;
+        }
+
+        .training-steps, .complete-motion {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            width: 100%;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 1vw;
+        }
+
+        .button {
+            background-color: #f8d568;
+            border: none;
+            color: #333;
+            padding: 1vw 1vw;
+            margin: 0.5vw 0;
+            cursor: pointer;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1vw;
+            transition: all 0.3s ease;
+            flex: 1;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .button:hover {
+            background-color: #f0c040;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            font-size: 2.5vw;
+            color: #333;
+            margin-bottom: 1vh;
+        }
+
+        h2 {
+            font-size: 1.8vw;
+            color: #666;
+            margin-bottom: 3vh;
+        }
+
+        h3 {
+            font-size: 1.5vw;
+            color: #444;
+            margin-top: 2vh;
+            margin-bottom: 1vh;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.9);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .arrow {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            padding: 16px;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+            transition: 0.6s ease;
+            border-radius: 0 3px 3px 0;
+            user-select: none;
+        }
+
+        .right-arrow {
+            right: 0;
+            border-radius: 3px 0 0 3px;
+        }
+
+        .left-arrow:hover, .right-arrow:hover {
+            background-color: rgba(0,0,0,0.8);
+        }
+    </style>
+</head>
+<body>
+    <a href="homepage.html" class="return-button"></a>
+    <div class="container">
+        <div class="left-section">
+            <div class="illustration">
+                <img src="img/prac_jump.png" alt="Main Illustration">
+            </div>
+            <div class="thumbnails">
+                <img class="staticarrow" src="img/left.png" alt="Previous">
+                <img src="img/j1.png" alt="Preparation" class="thumbnail" onclick="openModal(this.src)">
+                <img src="img/j2.png" alt="Propulsion" class="thumbnail" onclick="openModal(this.src)">
+                <img src="img/j3.png" alt="Landing" class="thumbnail" onclick="openModal(this.src)">
+                <img class="staticarrow" src="img/right.png" alt="Next">
+            </div>
+        </div>
+        <div class="right-section">
+            <h1>Short-distance Long Jump</h1>
+            <h2>Genre: Practice</h2>
+            <div class="training-steps">
+                <h3>1. Step by step training</h3>
+                <div class="button-group">
+                    <button class="button" onclick="window.location.href='jump_step1.html';">Preparation</button>
+                    <button class="button" onclick="window.location.href='jump_step2.html';">Propulsion</button>
+                    <button class="button" onclick="window.location.href='jump_step3.html';">Landing</button>
+                </div>
+            </div>
+            <div class="complete-motion">
+                <h3>2. Complete Motion</h3>
+                <div class="button-group">
+                    <button class="button" onclick="window.location.href='jump_full.html';">Full Action</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="myModal" class="modal">
+        <span class="close">&times;</span>
+        <span class="arrow left-arrow" onclick="changeImage(-1)">&#10094;</span>
+        <img class="modal-content" id="img01">
+        <span class="arrow right-arrow" onclick="changeImage(1)">&#10095;</span>
+    </div>
+
+    <script>
+        let currentIndex = 0;
+        const images = document.querySelectorAll(".thumbnail");
+
+        function openModal(src) {
+            currentIndex = Array.from(images).findIndex(img => img.src === src);
+            showModal(currentIndex);
+        }
+
+        function showModal(index) {
+            const modal = document.getElementById("myModal");
+            const modalImg = document.getElementById("img01");
+            modal.style.display = "flex";
+            modalImg.src = images[index].src;
+
+            const span = document.getElementsByClassName("close")[0];
+            span.onclick = function() {
+                modal.style.display = "none";
+            }
+        }
+
+        function changeImage(step) {
+            currentIndex += step;
+            if (currentIndex >= images.length) {
+                currentIndex = 0;
+            } else if (currentIndex < 0) {
+                currentIndex = images.length - 1;
+            }
+            showModal(currentIndex);
+        }
+    </script>
+</body>
+</html>

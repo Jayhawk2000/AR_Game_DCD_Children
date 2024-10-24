@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <!-- Meta tags for character encoding and responsive design -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Preparation</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Centered title -->
+    <h1 class="center-title">Preparation</h1>
+
+    <!-- Video element to display the camera feed -->
+    <video id="video1" autoplay playsinline></video>
+
+    <!-- Canvas element for rendering 3D models -->
+    <canvas id="three-canvas"></canvas>
+    <canvas id="three-canvas"></canvas>
+
+    <!-- Container for displaying voice prompts -->
+    <div id="speech-text" class="speech-text"></div>
+
+    <!-- Instruction text displayed before playing the voice prompt -->
+    <div id="instruction-text" class="instruction-text">Click the sound button to play the voice prompt</div>
+    
+    <div id="loading-text" class="loading-text">Loading model... 0%</div>
+
+    <!-- Container for buttons -->
+    <div id="cameraContainer">
+      <div class="button-container">
+        <!-- Back button to return to the previous screen -->
+        <button class="button" id="backButton">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M10 19l-7-7 7-7v4h8v6h-8v4z" />
+          </svg>
+        </button>
+
+        <!-- Next button to navigate to the next step -->
+        <button class="button" id="nextButton">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M9 19l7-7-7-7v14z" />
+          </svg>
+        </button>
+
+        <!-- Button to play the voice prompt -->
+        <button class="button" id="playSoundButton">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-.73-3.37-1.91-4.5l-1.42 1.42C14.2 9.98 14.5 10.96 14.5 12s-.3 2.02-.83 2.58l1.42 1.42c1.18-1.13 1.91-2.73 1.91-4.5zM18.5 12c0-3.04-1.23-5.79-3.22-7.78l-1.42 1.42C15.96 6.79 17 9.3 17 12s-1.04 5.21-2.64 6.36l1.42 1.42C17.27 17.79 18.5 15.04 18.5 12z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Canvas element for output -->
+    <canvas id="output_canvas"></canvas>
+
+    <!-- Container for displaying feedback text -->
+    <div id="feedback-text" class="feedback-text"></div>
+
+    <!-- Scripts for Three.js and FBXLoader to handle 3D rendering and loading 3D models -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+    <script src="preparation.js"></script>
+
+    <script type="module">
+      // Import and start the camera feed using the startCamera function from camera.js
+      import { startCamera } from "./camera.js";
+      startCamera("video1");
+
+      // Initialize Three.js scene, camera, and renderer for 3D content
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("three-canvas"), alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight); // Set the size of the renderer
+      camera.position.z = 5; // Set camera position
+
+      // Add a directional light to the scene
+      const light = new THREE.DirectionalLight(0xffffff, 1);
+      light.position.set(2, 2, 5); // Position the light
+      scene.add(light);
+
+      // Load the FBX model
+      const loader = new THREE.FBXLoader();
+      loader.load("ThrowObject.fbx", function (object) {
+        object.scale.set(0.04, 0.04, 0.04); // Scale the model
+        object.position.set(-7, -4, -5); // Set the position of the model
+        const degreesToRotate = 20; 
+        const radiansToRotate = degreesToRotate * (Math.PI / 180); 
+        object.rotation.y = radiansToRotate;
+        scene.add(object); // Add the model to the scene
+        
+        // Loading progress event listener
+          const loadingText = document.getElementById("loading-text");
+
+          loader.manager.onProgress = function (item, loaded, total) {
+            const percentLoaded = Math.round((loaded / total) * 100);
+            loadingText.textContent = `Loading model... ${percentLoaded}%`;
+          };
+
+          // Hide loading text when loading is complete
+          loader.manager.onLoad = function () {
+            loadingText.style.display = "none";
+          };
+
+        // Set up the animation mixer
+        const mixer = new THREE.AnimationMixer(object);
+        if (object.animations.length > 0) {
+          const action = mixer.clipAction(object.animations[0]);
+          action.play();
+
+          // Pause the animation at 3.3 seconds
+          mixer.setTime(3.3);
+          action.paused = true;
+        }
+
+        // Animation loop to render the scene
+        function animate() {
+          requestAnimationFrame(animate);
+          renderer.render(scene, camera); // Render the scene
+        }
+        animate();
+      });
+
+      // Update the camera and renderer size when the window is resized
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight; // Update the camera's aspect ratio
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight); // Update the renderer size
+      });
+
+      // Initialize speech synthesis (Web Speech API)
+      let voices = [];
+
+      // Function to load available voices for speech synthesis
+      function initializeVoices() {
+        voices = window.speechSynthesis.getVoices();
+      }
+
+      // Update the list of voices when they become available
+      window.speechSynthesis.onvoiceschanged = initializeVoices;
+
+      // Function to handle the speech synthesis and display text prompts
+      function speak(text, callback) {
+        // Get the speech text element
+        const speechTextElement = document.getElementById("speech-text");
+
+        // Display the text corresponding to the speech
+        speechTextElement.textContent = text;
+        speechTextElement.style.display = "block"; // Show the text container
+
+        // Create a new SpeechSynthesisUtterance for the speech
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.pitch = 1.2; // Set pitch
+        utterance.rate = 1; // Set rate
+        utterance.volume = 1; // Set volume
+        utterance.lang = "en"; // Set the language
+
+        // Choose a specific voice based on the browser being used
+        let specificVoice = null;
+        if (navigator.userAgent.includes("Chrome")) {
+          specificVoice = voices.find((voice) => voice.name === "Google UK English Female");
+        } else if (navigator.userAgent.includes("Safari")) {
+          specificVoice = voices.find((voice) => voice.name === "Samantha");
+        } else if (navigator.userAgent.includes("Edg")) {
+          specificVoice = voices.find((voice) => voice.name === "Microsoft Natasha Online (Natural) - English (Australia)");
+        } else if (navigator.userAgent.includes("Firefox")) {
+          specificVoice = voices.find((voice) => voice.name === "Microsoft Zira Desktop - English (United States)");
+        } else {
+          specificVoice = voices.find((voice) => voice.gender === "female");
+        }
+
+        // Set the voice if available
+        if (specificVoice) {
+          utterance.voice = specificVoice;
+        } else {
+          console.warn("Specific voice not found, using default.");
+        }
+
+        // Clear the text container when the speech ends and execute callback
+        utterance.onend = function () {
+          speechTextElement.textContent = ""; // Clear the text
+          speechTextElement.style.display = "none"; // Hide the text container
+          if (callback) callback(); // Execute callback if provided
+        };
+
+        // Play the speech
+        window.speechSynthesis.speak(utterance);
+      }
+
+      // Predefined speech prompts to be played on page load
+      let welcomeSpeech = [
+        "Hello, boys and girls, welcome to the preparation of throw!",
+        "Stand far away so you can see your whole body on the screen!",
+        "Let's follow the character! Ready?",
+        "Side-on or stand sideways, to prepare for throw!"
+      ];
+
+      let speechTimeouts = []; // Array to store speech timeouts
+
+      // Event listener for play sound button to play speech prompts
+      const playSoundButton = document.getElementById("playSoundButton");
+      playSoundButton.addEventListener("click", () => {
+        window.speechSynthesis.cancel(); // Stop any ongoing speech
+
+        document.getElementById("instruction-text").style.display = "none"; // Hide instruction text
+
+        playSpeeches(); // Start playing speech prompts
+      });
+
+      // Function to play speech prompts in sequence
+      function playSpeeches() {
+        clearSpeechTimeouts(); // Clear any ongoing timeouts
+
+        let index = 0;
+        function playNextSpeech() {
+          if (index < welcomeSpeech.length) {
+            speak(welcomeSpeech[index], () => {
+              index++;
+              if (index < welcomeSpeech.length) {
+                setTimeout(playNextSpeech, 2000); // Wait 2 seconds before playing the next speech
+              }
+            });
+          }
+        }
+        playNextSpeech();
+      }
+
+      // Clear any active speech timeouts
+      function clearSpeechTimeouts() {
+        speechTimeouts.forEach((timeout) => clearTimeout(timeout));
+      }
+
+      // Stop speech when the page is closed or navigated away
+      window.addEventListener("beforeunload", () => {
+        clearSpeechTimeouts();
+        window.speechSynthesis.cancel(); // Stop any ongoing speech
+      });
+
+      // Handle back button click to navigate to index.html
+      const backButton = document.getElementById("backButton");
+      backButton.addEventListener("click", () => {
+        window.location.href = "../../prac_throw.html"; // Redirect to index.html
+      });
+
+      // Handle next button click to navigate to StepForward.html
+      const nextButton = document.getElementById("nextButton");
+      nextButton.addEventListener("click", () => {
+        window.location.href = "../../throw_step2.html"; // Redirect to StepForward.html
+      });
+    </script>
+  </body>
+</html>

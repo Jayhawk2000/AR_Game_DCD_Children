@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homepage</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh; /* Full height of the viewport */
+        overflow: hidden;
+    }
+
+    .background {
+        background-image: url('img/homepage.png');
+        background-size: 100vw 100vh; 
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-attachment: fixed;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .content {
+        width: 75vw;
+        height: 100%;
+        background-color: white;
+        display: flex;
+        flex-direction: column;
+        padding: 5vh;
+    }
+
+    .section {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+        height: 50vh;
+    }
+
+
+    .title {
+        text-align: left;
+        font-size: 1.8vw; /* Adjusted to viewport width */
+        margin-top: 1.2vw; /* 20px to vw based on 1920px width */
+        font-family: 'Roboto', sans-serif;
+        position: relative;
+        padding-left: 1.1vw; /* 20px to vw based on 1920px width */
+    }
+
+    .title::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 100%;
+        width: 0.4vw; /* 8px to vw based on 1920px width */
+        background-color: #FFB000;
+    }
+
+    .card-slider {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding: 1.04vw; /* 20px to vw */
+        gap: 1.04vw; /* 20px to vw */
+    }
+    .card {
+        flex: 0 0 auto;
+        width: 38vw; 
+        height: 24vh; 
+        background-color: #f9f9f9;
+        border: 0.1vw solid #ddd; 
+        padding: 1vw; 
+        
+        scroll-snap-align: start;
+        border-radius: 0.5vw;
+        box-shadow: 0 0.2vw 0.3vw rgba(0,0,0,0.1);
+        background-size: cover;
+        background-position: center;
+        cursor: pointer;
+        transition: box-shadow 0.3s ease;
+    }
+    .card img {
+    width: calc(100% - 4vw); /* 图片宽度为容器宽度减去两边留白 */
+    height: auto; /* 高度自适应以保持图像比例 */
+}
+    .card:hover {
+        box-shadow: 0 0.31vw 0.63vw rgba(0,0,0,0.3);
+    }
+
+    /* 隐藏滚动条但保持滚动功能 */
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* 美化滚动条 */
+    .card-slider::-webkit-scrollbar {
+        height: 8px;
+    }
+    .card-slider::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+    .card-slider::-webkit-scrollbar-thumb {
+        background: #FFB000;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+    .card-slider::-webkit-scrollbar-thumb:hover {
+        background: #e09e00;
+    }
+</style>
+</head>
+<body>
+
+<div class="background">
+    <div class="content">
+        <div class="section">
+            <br><br><br>
+            <h2 class="text-4xl font-bold text-gray-800 mb-8 relative pl-6 inline-block">
+                <span class="relative z-10">Practice</span>
+                <span class="absolute left-0 bottom-0 w-full h-3 bg-yellow-400 transform -skew-x-12"></span>
+            </h2>
+            <div class="card-slider overflow-x-auto snap-x snap-mandatory flex space-x-6 p-4">
+                <a href="prac_bal.html" class="card flex-none w-96 h-64 bg-cover bg-center rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 relative overflow-hidden group" style="background-image: url('img/balance_practice.png');">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                        <h3 class="text-white text-2xl font-bold mb-2">Balance Practice</h3>
+                        <p class="text-white text-sm">Improve your balance skills</p>
+                    </div>
+                </a>
+                <a href="prac_jump.html" class="card flex-none w-96 h-64 bg-cover bg-center rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 relative overflow-hidden group" style="background-image: url('img/jump_practice.png');">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                        <h3 class="text-white text-2xl font-bold mb-2">Jump Practice</h3>
+                        <p class="text-white text-sm">Enhance your jumping technique</p>
+                    </div>
+                </a>
+                <a href="prac_throw.html" class="card flex-none w-96 h-64 bg-cover bg-center rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 relative overflow-hidden group" style="background-image: url('img/throw_practice.png');">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                        <h3 class="text-white text-2xl font-bold mb-2">Throw Practice</h3>
+                        <p class="text-white text-sm">Perfect your throwing skills</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="section">
+            <br><br><br>
+            <h2 class="text-4xl font-bold text-gray-800 mb-8 relative pl-6 inline-block">
+                <span class="relative z-10">Chan</span>
+                <span class="absolute left-0 bottom-0 w-full h-3 bg-yellow-400 transform -skew-x-12"></span>
+            </h2>
+            <div class="card-slider overflow-x-auto snap-x snap-mandatory flex space-x-4 p-4">
+                <a href="cha_bal.html" class="card flex-none w-96 h-64 bg-cover bg-center rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 relative overflow-hidden group" style="background-image: url('img/balance_challenge.png');">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                        <h3 class="text-white text-2xl font-bold mb-2">Balance Challenge</h3>
+                        <p class="text-white text-sm">Test your balance skills</p>
+                    </div>
+                </a>
+                <a href="cha_jump.html" class="card flex-none w-96 h-64 bg-cover bg-center rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 relative overflow-hidden group" style="background-image: url('img/jump_challenge.png');">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                        <h3 class="text-white text-2xl font-bold mb-2">Jump Challenge</h3>
+                        <p class="text-white text-sm">Push your jumping limits</p>
+                    </div>
+                </a>
+                <a href="cha_throw.html" class="card flex-none w-96 h-64 bg-cover bg-center rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 relative overflow-hidden group" style="background-image: url('img/throw_challenge.png');">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                        <h3 class="text-white text-2xl font-bold mb-2">Throw Challenge</h3>
+                        <p class="text-white text-sm">Challenge your throwing accuracy</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

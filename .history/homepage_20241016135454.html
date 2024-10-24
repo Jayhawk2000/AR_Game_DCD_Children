@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homepage</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .background {
+        background-image: url('img/homepage.png');
+        background-size: 100vw 100vh; 
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-attachment: fixed;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .content {
+        width: 75vw;
+        height: 100%;
+        background-color: white;
+        display: flex;
+        flex-direction: column;
+        padding: 5vh;
+    }
+
+    .section {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .card-slider {
+        overflow-x: auto;
+        padding-bottom: 20px;
+    }
+
+    /* 美化滚动条 */
+    .card-slider::-webkit-scrollbar {
+        height: 8px;
+    }
+    .card-slider::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+    .card-slider::-webkit-scrollbar-thumb {
+        background: #FFB000;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+    .card-slider::-webkit-scrollbar-thumb:hover {
+        background: #e09e00;
+    }
+
+    .card {
+        width: 700px;
+        height: 300px;
+    }
+
+    .hover-gradient-yellow {
+        background: linear-gradient(to top, rgba(251, 191, 36, 0.8), rgba(251, 191, 36, 0) 70%);
+    }
+    .hover-gradient-green {
+        background: linear-gradient(to top, rgba(52, 211, 153, 0.8), rgba(52, 211, 153, 0) 70%);
+    }
+    .hover-gradient-pink {
+        background: linear-gradient(to top, rgba(236, 72, 153, 0.8), rgba(236, 72, 153, 0) 70%);
+    }
+    .hover-gradient-blue {
+        background: linear-gradient(to top, rgba(59, 130, 246, 0.8), rgba(59, 130, 246, 0) 70%);
+    }
+    .hover-gradient-purple {
+        background: linear-gradient(to top, rgba(167, 139, 250, 0.8), rgba(167, 139, 250, 0) 70%);
+    }
+    .hover-gradient-red {
+        background: linear-gradient(to top, rgba(239, 68, 68, 0.8), rgba(239, 68, 68, 0) 70%);
+    }
+</style>
+</head>
+<body>
+
+<div class="background">
+    <div class="content">
+        <div class="section">
+            <br><br><br>
+            <h2 class="text-4xl font-bold text-gray-800 mb-8 relative pl-6 inline-block">
+                <span class="relative z-10">Practice</span>
+                <span class="absolute left-0 bottom-0 w-full h-3 bg-yellow-400 transform -skew-x-12"></span>
+            </h2>
+            <div class="card-slider overflow-x-auto snap-x snap-mandatory flex space-x-6 p-4">
+                <a href="prac_bal.html" class="card flex-none bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 relative overflow-hidden group border border-white border-opacity-20">
+                    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('img/balance_practice.png');"></div>
+                    <div class="absolute inset-0 hover-gradient-yellow opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                        <h3 class="text-white text-3xl font-bold mb-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">Balance Practice</h3>
+                        <p class="text-white text-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">Improve your balance skills</p>
+                    </div>
+                </a>
+                <a href="prac_jump.html" class="card flex-none bg-gradient-to-br from-green-400 via-blue-500 to-purple-500 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 relative overflow-hidden group border border-white border-opacity-20">
+                    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('img/jump_practice.png');"></div>
+                    <div class="absolute inset-0 hover-gradient-green opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                        <h3 class="text-white text-3xl font-bold mb-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">Jump Practice</h3>
+                        <p class="text-white text-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">Enhance your jumping technique</p>
+                    </div>
+                </a>
+                <a href="prac_throw.html" class="card flex-none bg-gradient-to-br from-pink-400 via-red-500 to-yellow-500 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 relative overflow-hidden group border border-white border-opacity-20">
+                    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('img/throw_practice.png');"></div>
+                    <div class="absolute inset-0 hover-gradient-pink opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                        <h3 class="text-white text-3xl font-bold mb-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">Throw Practice</h3>
+                        <p class="text-white text-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">Perfect your throwing skills</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="section">
+            <br><br><br>
+            <h2 class="text-4xl font-bold text-gray-800 mb-8 relative pl-6 inline-block">
+                <span class="relative z-10">Challenge</span>
+                <span class="absolute left-0 bottom-0 w-full h-3 bg-yellow-400 transform -skew-x-12"></span>
+            </h2>
+            <div class="card-slider overflow-x-auto snap-x snap-mandatory flex space-x-6 p-4">
+                <a href="cha_bal.html" class="card flex-none bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-500 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 relative overflow-hidden group border border-white border-opacity-20">
+                    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('img/balance_challenge.png');"></div>
+                    <div class="absolute inset-0 hover-gradient-blue opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                        <h3 class="text-white text-3xl font-bold mb-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">Balance Challenge</h3>
+                        <p class="text-white text-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">Test your balance skills</p>
+                    </div>
+                </a>
+                <a href="cha_jump.html" class="card flex-none bg-gradient-to-br from-green-400 via-teal-500 to-blue-500 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 relative overflow-hidden group border border-white border-opacity-20">
+                    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('img/jump_challenge.png');"></div>
+                    <div class="absolute inset-0 hover-gradient-purple opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                        <h3 class="text-white text-3xl font-bold mb-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">Jump Challenge</h3>
+                        <p class="text-white text-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">Push your jumping limits</p>
+                    </div>
+                </a>
+                <a href="cha_throw.html" class="card flex-none bg-gradient-to-br from-red-400 via-pink-500 to-purple-500 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 relative overflow-hidden group border border-white border-opacity-20">
+                    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('img/throw_challenge.png');"></div>
+                    <div class="absolute inset-0 hover-gradient-red opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                        <h3 class="text-white text-3xl font-bold mb-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">Throw Challenge</h3>
+                        <p class="text-white text-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">Challenge your throwing accuracy</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

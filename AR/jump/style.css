@@ -1,4 +1,5 @@
 /* style.css */
+/* Full-screen layout, center content */
 body, html {
   margin: 0;
   padding: 0;
@@ -11,12 +12,14 @@ body, html {
   background-color: #000;
 }
 
+/* Camera video feed container */
 #cameraContainer {
   position: relative;
   width: 100%;
   height: 100%;
 }
 
+/* Full-screen mirrored video */
 video {
   width: 100%;
   height: 100%;
@@ -27,6 +30,7 @@ video {
   transform: scaleX(-1);
 }
 
+/* Full-screen canvas overlay */
 canvas {
   width: 100%;
   height: 100%;
@@ -36,16 +40,18 @@ canvas {
   left: 0;
 }
 
+/* Button container in top-left corner */
 .button-container {
   position: absolute;
-  top: 10px; /* 将按钮容器定位到页面顶部 */
-  left: 10px; /* 靠近页面左边 */
+  top: 10px; 
+  left: 10px; 
   display: flex;
-  flex-direction: column; /* 设置为竖直排列 */
-  gap: 10px; /* 按钮之间的间距 */
-  z-index: 1; /* 确保按钮位于视频之上 */
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1;
 }
 
+/* Circular buttons with hover effect */
 .button {
   width: 60px;
   height: 60px;
@@ -56,7 +62,6 @@ canvas {
   align-items: center;
   cursor: pointer;
   border: none;
-  outline: none;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -67,51 +72,84 @@ canvas {
 }
 
 .button:hover {
-   background-color: #e09e00;
+  background-color: #e09e00;
 }
 
+/* Centered title */
 .center-title {
-    position: absolute;
-    top: 5%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 2.5rem;
-    color: white;
-    text-align: center;
-    font-family: Roboto, sans-serif;
-    z-index: 2; /* 确保标题在视频和画布的前面 */
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2.5rem;
+  color: white;
+  font-family: Roboto, sans-serif;
+  z-index: 2;
 }
 
-/* 语音显示文本样式 */
+/* Speech text, hidden by default */
 .speech-text {
-    display: none; /* 初始时隐藏文本框 */
-    position: absolute;
-    top: 15%;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1.5rem;
-    color: #fff;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 10px 20px;
-    border-radius: 10px;
-    text-align: center;
-    font-family: Roboto, sans-serif;
-    max-width: 80%;
-    z-index: 2;
+  display: none;
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.5rem;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px 20px;
+  border-radius: 10px;
+  text-align: center;
+  font-family: Roboto, sans-serif;
+  max-width: 80%;
+  z-index: 2;
 }
 
+/* Instruction text, same style as speech text */
 .instruction-text {
-    position: absolute;
-    top: 15%;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1.5rem;
-    color: #fff;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 10px 20px;
-    border-radius: 10px;
-    text-align: center;
-    font-family: Roboto, sans-serif;
-    max-width: 80%;
-    z-index: 2;
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.5rem;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px 20px;
+  border-radius: 10px;
+  text-align: center;
+  font-family: Roboto, sans-serif;
+  max-width: 80%;
+  z-index: 2;
 }
+
+/* Prompt text */
+.prompt-text {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.5rem;
+  color: #fff;
+  background-color: #FFB000;
+  padding: 10px 20px;
+  border-radius: 10px;
+  text-align: center;
+  font-family: Roboto, sans-serif;
+  max-width: 80%;
+  z-index: 2;
+}
+
+/* Loading text centered on screen */
+.loading-text {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+  color: #333;
+  background-color: rgba(255, 255, 255, 0.8);
+  font-family: Roboto, sans-serif;
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+

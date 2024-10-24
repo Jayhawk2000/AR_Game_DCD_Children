@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Landing page</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<style>
+    body, html {
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        overflow-x: hidden; /* 防止用户自己滚动 */
+        overflow-y: hidden; /* 防止垂直滚动 */
+    }
+
+    .backgrounds {
+        display: flex;
+        flex-direction: row;
+        min-width: 200vw; /* 保证有足够的宽度容纳两个背景 */
+    }
+
+    .background {
+        width: 100vw; /* 每个背景占满整个视口宽度 */
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-attachment: fixed;
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .content {
+        width: 90vw; /* 宽度使用视口宽度百分比 */
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 5vw; /* 使用视口宽度单位 */
+        padding-top: 5vw; /* 顶部填充 */
+    }
+
+    .left-section {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1vw;
+        }
+
+    .right-section {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+    .text {
+        padding-top: 5vw; /* 顶部填充 */
+        padding-right: 0.1vw; /* 右侧填充 */
+    }
+
+    .welcome {
+        font-size: 4vw; /* 字体大小 */
+        font-weight: bold;
+        color: black;
+        margin-bottom: 2vw; /* 底部边距 */
+    }
+
+    .description1 {
+        font-size: 2vw; /* 字体大小 */
+        color: #333;
+        line-height: 1.5; /* 行高 */
+    }
+
+    .description2 {
+        font-size: 2vw; /* 字体大小 */
+        color: #333;
+        line-height: 1.5; /* 行高 */
+        line-height: 1.5; /* 行高 */
+    }
+
+    .image img {
+        width: 100%; /* 宽度100% */
+        height: auto; /* 高度自动 */
+    }
+
+    .footer {
+        width: 100%;
+        display: flex;
+        justify-content: center; /* 水平居中 */
+        align-items: flex-end; /* 垂直底部对齐 */
+        position: absolute;
+        bottom: 4vw; /* 距底部的距离 */
+    }
+
+    .next-button {
+        padding: 1vw 4vw; /* 按钮内边距 */
+        font-size: 2vw; /* 字体大小 */
+        background-color: #febb2a;
+        color: white;
+        border: none;
+        border-radius: 1.5vw; /* 边框圆角 */
+        cursor: pointer;
+        transition: box-shadow 0.3s;
+        margin-bottom: 1vw;
+    }
+
+    .next-button:hover {
+        box-shadow: 0 0.8vw 1.6vw 0 rgba(0,0,0,0.2);
+    }
+
+    .arrow {
+        position: absolute;
+        top: 50%; /* 垂直居中 */
+        font-size: 4vw;
+        color: rgb(160, 171, 171);
+        border: none;
+        background: none;
+        cursor: pointer;
+        transition: opacity 0.3s ease;
+    }
+
+    .arrow:hover {
+        box-shadow: 0 0.8vw 1.6vw 0 rgba(0,0,0,0.2);
+    }
+
+    .right-arrow {
+        right: 1vw; /* 右侧位置 */
+    }
+
+    .left-arrow {
+        left: 1vw; /* 左侧位置 */
+    }
+
+</style>
+</head>
+<body>
+
+<div class="backgrounds">
+    <div class="background" style="background-image: url('img/landingpage.png');">
+        <div class="content">
+            <div class="text">
+                <div class="welcome">Welcome to the Adventure!<br></div>
+                <div class="description1">
+                    Hey there!<br>
+                    Are you ready to become a super mover and shaker?<br>
+                    Here, you'll run, balance, and throw like a hero!<br>
+                </div>
+            </div>
+            <div class="image">
+                <img src="img/1.png" alt="Adventure Illustration">
+            </div>
+        </div>
+        
+        <button class="arrow right-arrow" onclick="scrollToBackground(1)"><b>⟩</b></button>
+    </div>
+    <div class="background" style="background-image: url('img/landingpage.png');">
+        <div class="content">
+            <div class="left-section">
+            <div class="image">
+                <img src="img/2.png" alt="Adventure Illustration width:120vw">
+            </div>
+        </div>
+        <div class="right-section">
+            <div class="text">
+                <div class="description2">
+                    Whether you're practicing or taking on a fun challenge, there's always something exciting waiting for you.<br> <br>
+                    Get ready, it's time to start your adventure! <br><br> <br>
+                </div>
+            </div>
+        </div>
+        </div>
+        <button class="arrow left-arrow" onclick="scrollToBackground(0)"><b>⟨</b></button>
+        <div class="footer">
+            <button class="next-button" onclick="window.location.href='homepage.html';"><b>Next</b></button>
+        </div>
+    </div>
+</div>
+
+<script>
+   function scrollToBackground(index) {
+    const backgrounds = document.querySelectorAll('.background');
+    if (backgrounds[index]) {
+        backgrounds[index].scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+</script>
+</body>
+</html>

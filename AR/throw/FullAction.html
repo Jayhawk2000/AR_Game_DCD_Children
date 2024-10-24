@@ -14,14 +14,20 @@
     <!-- Video element to display the camera feed -->
     <video id="video4" autoplay playsinline></video>
 
-    <!-- Canvas element for rendering the 3D model -->
+    <!-- Canvas element for rendering 3D models -->
     <canvas id="three-canvas"></canvas>
+    <canvas id="output_canvas"></canvas>
 
-    <!-- Container to display voice prompts as text -->
+    <!-- Container to display the speech text -->
     <div id="speech-text" class="speech-text"></div>
     
-    <!-- Instruction text displayed before playing the voice prompt -->
-    <div id="instruction-text" class="instruction-text">Click the sound button to play the voice prompt</div>
+    <!-- Container to display the instruction text -->
+    <div id="instruction-text" class="instruction-text"></div>
+    
+    <!-- Textbox to prompt the user to click the speaker button -->
+    <div id="prompt-text" class="prompt-text">Click the sound button to play the voice prompt</div>
+    
+    <div id="loading-text" class="loading-text">Loading model... 0%</div>
 
     <!-- Container for buttons such as back, previous, and play sound -->
     <div id="cameraContainer">
@@ -55,6 +61,13 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
 
+    <!-- Scripts for MediaPipe -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+    <script src="fullAction.js"></script>
+
     <!-- Main script handling the camera feed, 3D model rendering, and voice prompts -->
     <script type="module">
       // Import and start the camera feed using the startCamera function from camera.js
@@ -77,7 +90,7 @@
       camera.position.z = 5; // Set camera position
 
       // Add a directional light to the scene
-      const light = new THREE.DirectionalLight(0xffffff, 1.5);
+      const light = new THREE.DirectionalLight(0xffffff, 1.8);
       light.position.set(2, 2, 5); // Position the light
       scene.add(light);
 
@@ -98,6 +111,19 @@
           const radiansToRotate = degreesToRotate * (Math.PI / 180); 
           object.rotation.y = radiansToRotate;
           scene.add(object); // Add the model to the scene
+          
+          // Loading progress event listener
+          const loadingText = document.getElementById("loading-text");
+
+          loader.manager.onProgress = function (item, loaded, total) {
+            const percentLoaded = Math.round((loaded / total) * 100);
+            loadingText.textContent = `Loading model... ${percentLoaded}%`;
+          };
+
+          // Hide loading text when loading is complete
+          loader.manager.onLoad = function () {
+            loadingText.style.display = "none";
+          };
 
           // Set up the animation mixer and play the first animation
           const mixer = new THREE.AnimationMixer(object);
@@ -149,13 +175,6 @@
 
       // Function to handle the speech synthesis and display text prompts
       function speak(text, callback) {
-        // Get the speech text element
-        const speechTextElement = document.getElementById("speech-text");
-
-        // Display the text corresponding to the speech
-        speechTextElement.textContent = text;
-        speechTextElement.style.display = "block"; // Show the text container
-
         // Create a new SpeechSynthesisUtterance for the speech
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.pitch = 1.2; // Set pitch
@@ -186,8 +205,6 @@
 
         // Clear the text container when the speech ends and execute callback
         utterance.onend = function () {
-          speechTextElement.textContent = ""; // Clear the text
-          speechTextElement.style.display = "none"; // Hide the text container
           if (callback) callback(); // Execute callback if provided
         };
 
@@ -215,7 +232,7 @@
       playSoundButton.addEventListener("click", () => {
         window.speechSynthesis.cancel(); // Stop any ongoing speech
 
-        document.getElementById("instruction-text").style.display = "none"; // Hide instruction text
+        document.getElementById("prompt-text").style.display = "none"; // Hide instruction text
 
         playSpeeches(); // Start playing speech prompts
       });

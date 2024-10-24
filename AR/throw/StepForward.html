@@ -16,12 +16,18 @@
 
     <!-- Canvas for rendering 3D models -->
     <canvas id="three-canvas"></canvas>
-
-    <!-- Container for displaying speech prompts -->
+    <canvas id="output_canvas"></canvas>
+    
+    <!-- Container to display the speech text -->
     <div id="speech-text" class="speech-text"></div>
-
-    <!-- Instruction text prompting users to play the voice prompt -->
-    <div id="instruction-text" class="instruction-text">Click the sound button to play the voice prompt</div>
+    
+    <!-- Container to display the instruction text -->
+    <div id="instruction-text" class="instruction-text"></div>
+    
+    <!-- Textbox to prompt the user to click the speaker button -->
+    <div id="prompt-text" class="prompt-text">Click the sound button to play the voice prompt</div>
+    
+    <div id="loading-text" class="loading-text">Loading model... 0%</div>
 
     <!-- Container for buttons, including back, previous, next, and play sound buttons -->
     <div id="cameraContainer">
@@ -61,6 +67,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+    <script src="stepForward.js"></script>
 
     <script type="module">
       // Import and start the camera feed using startCamera function from camera.js
@@ -75,12 +87,12 @@
       camera.position.z = 5; // Set camera position to ensure visibility of the 3D model
 
       // Add a directional light to the scene
-      const light = new THREE.DirectionalLight(0xffffff, 1.6); // Adjust light intensity
+      const light = new THREE.DirectionalLight(0xffffff, 1.8); // Adjust light intensity
       light.position.set(2, 2, 5); // Position the light
       scene.add(light);
 
       // Set animation start and end times
-      const startTime = 3.3; // Start at 3.3 seconds
+      const startTime = 3.8; // Start at 3.3 seconds
       const endTime = 4.4; // End at 4.4 seconds
       let currentTime = startTime; // Initialize current time for the animation
       const slowFactor = 0.5; // Slow down the animation by half-speed (0.5)
@@ -96,6 +108,19 @@
           const radiansToRotate = degreesToRotate * (Math.PI / 180); 
           object.rotation.y = radiansToRotate;
           scene.add(object); // Add the 3D model to the scene
+          
+          // Loading progress event listener
+          const loadingText = document.getElementById("loading-text");
+
+          loader.manager.onProgress = function (item, loaded, total) {
+            const percentLoaded = Math.round((loaded / total) * 100);
+            loadingText.textContent = `Loading model... ${percentLoaded}%`;
+          };
+
+          // Hide loading text when loading is complete
+          loader.manager.onLoad = function () {
+            loadingText.style.display = "none";
+          };
 
           const mixer = new THREE.AnimationMixer(object); // Create an animation mixer for handling animations
           if (object.animations.length > 0) {
@@ -145,10 +170,6 @@
 
       // Function to handle speech synthesis and display corresponding text
       function speak(text, callback) {
-        const speechTextElement = document.getElementById("speech-text"); // Get the speech text element
-        speechTextElement.textContent = text; // Set the speech text
-        speechTextElement.style.display = "block"; // Show the text
-
         const utterance = new SpeechSynthesisUtterance(text); // Create a new speech utterance
         utterance.pitch = 1.2; // Set pitch
         utterance.rate = 1; // Set rate of speech
@@ -177,8 +198,6 @@
 
         // Clear the speech text once the speech is finished
         utterance.onend = function () {
-          speechTextElement.textContent = ""; // Clear the text
-          speechTextElement.style.display = "none"; // Hide the text container
           if (callback) callback(); // Execute callback function if provided
         };
 
@@ -195,13 +214,12 @@
       ];
 
       let speechTimeouts = [];
-      let loopInterval = null;
 
       // Play the speech prompts when the sound button is clicked
       const playSoundButton = document.getElementById("playSoundButton");
       playSoundButton.addEventListener("click", () => {
         window.speechSynthesis.cancel(); // Stop any current speech
-        document.getElementById("instruction-text").style.display = "none"; // Hide instruction text
+        document.getElementById("prompt-text").style.display = "none"; // Hide instruction text
         playSpeeches(); // Play the speech prompts
       });
 
