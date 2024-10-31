@@ -26,4 +26,9 @@ Include screenshots or GIFs to showcase the main features of your project.
 1. Clone the repository:
    ```bash
    git clone https://github.com/username/repo-name.git
+
+
+## Usage
+
+## Contributing
    
