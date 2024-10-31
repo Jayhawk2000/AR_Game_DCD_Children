@@ -31,4 +31,6 @@ Include screenshots or GIFs to showcase the main features of your project.
 ## Usage
 
 ## Contributing
+
+## License
    
