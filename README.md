@@ -1,4 +1,4 @@
-# Project Name
+# AR Game Designed for DCD Children
 
 A brief description of project does and its purpose.
 
@@ -11,24 +11,28 @@ A brief description of project does and its purpose.
 - [Contributing](#contributing)
 - [License](#license)
 
-## Features
+## Functions
 
-- Feature 1
-- Feature 2
-- Feature 3
+- Training Mode
+- Challenge Mode
 
 ## Demo
 
-Include videos to showcase the main features of project.
+A recorded project demonstration video that shows the main functions and usage of the application in detail.
 
 ## Installation
 
-1. Clone the repository:
+1. Clone the repository or download the project
    ```bash
    git clone https://github.com/Jayhawk2000/AR_Game.git
-
+2. Open the index.html file via Visual Studio
+3. Install LiveServer plugin
+4. Open the index.html file via LiverServer
 
 ## Usage
+
+You can try this application throught the Github Pages directly via the following link
+
 
 ## Contributing
 
