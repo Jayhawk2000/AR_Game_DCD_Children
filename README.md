@@ -4,7 +4,7 @@ A brief description of project does and its purpose.
 
 ## Table of Contents
 
-- [Features](#features)
+- [Functions](#functions)
 - [Demo](#demo)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -32,9 +32,15 @@ A recorded project demonstration video that shows the main functions and usage o
 ## Usage
 
 You can try this application throught the Github Pages directly via the following link
-
+https://jayhawk2000.github.io/AR_Game_DCD_Children/
 
 ## Contributing
+Ran Ran: 
+Yuzhuo Jia: 
+Xinglin Chen: 
+Wenbo Wang: 
+Yuqi Wang: 
+Jiahao Yang: 
 
 ## License
    
