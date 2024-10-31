@@ -34,6 +34,12 @@ A recorded project demonstration video that shows the main functions and usage o
 You can try this application throught the Github Pages directly via the following link
 https://jayhawk2000.github.io/AR_Game_DCD_Children/
 
+## Dependencies
+
+- [Mediapipe](https://ai.google.dev/edge/mediapipe/solutions/guide): A powerful tool for motion capture.
+- [Mixamo](https://www.mixamo.com/): Provides various 3D characters.
+
+
 ## Contributing
 Ran Ran: 
 Yuzhuo Jia: 
