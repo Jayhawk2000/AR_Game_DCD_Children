@@ -1,6 +1,6 @@
 # Project Name
 
-A brief description of what your project does and its purpose.
+A brief description of project does and its purpose.
 
 ## Table of Contents
 
@@ -19,13 +19,13 @@ A brief description of what your project does and its purpose.
 
 ## Demo
 
-Include screenshots or GIFs to showcase the main features of your project.
+Include videos to showcase the main features of project.
 
 ## Installation
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/username/repo-name.git
+   git clone https://github.com/Jayhawk2000/AR_Game.git
 
 
 ## Usage
