@@ -19,6 +19,7 @@ A brief description of project does and its purpose.
 ## Demo
 
 A recorded project demonstration video that shows the main functions and usage of the application in detail.
+[Watch the video](media/demo.mp4)
 
 ## Installation
 
