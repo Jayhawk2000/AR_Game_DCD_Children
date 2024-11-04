@@ -29,8 +29,9 @@ A recorded project demonstration video that shows the main functions and usage o
    ```bash
    git clone https://github.com/Jayhawk2000/AR_Game.git
 2. Open the index.html file in Visual Studio
-3. Install LiveServer plugin
-4. Open the index.html file via LiverServer
+3. Open the folder of this project
+4. Install LiveServer plugin
+5. Open the index.html file via LiverServer
 
 ## Usage
 
