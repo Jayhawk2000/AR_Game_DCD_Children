@@ -43,7 +43,7 @@ https://jayhawk2000.github.io/AR_Game_DCD_Children/
 - [Mediapipe](https://ai.google.dev/edge/mediapipe/solutions/guide): A powerful tool for motion capture.
 - [Mixamo](https://www.mixamo.com/): Provides various 3D characters.
 
-## Contributors
+## Contributing
 
 - **Ran Ran** - Team leader, UI development.
 - **Yuzhuo Jia** - Challenge mode, motion recognition function development.
