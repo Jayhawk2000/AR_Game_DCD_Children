@@ -8,6 +8,7 @@ Develop an Augmented Reality (AR)-based platform to help young children, especia
 - [Demo](#demo)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Dependencies](#dependencies)
 - [Contributing](#contributing)
 - [License](#license)
 
